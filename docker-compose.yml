@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:alpine
+    container_name: control-tower-db
+    environment:
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "mydb"
+    ports:
+      - '5432:5432'
+
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: control-tower-app
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
