@@ -15,13 +15,11 @@ CREATE TABLE "Supplier" (
 );
 
 -- CreateTable
-CREATE TABLE "Stock" (
-    "id" TEXT NOT NULL,
+CREATE TABLE "_ProductToSupplier" (
     "productId" TEXT NOT NULL,
-    "qty" INTEGER NOT NULL,
     "supplierId" TEXT NOT NULL,
+     CONSTRAINT "ProductToSupplier_pkey" PRIMARY KEY ("productId", "supplierId")
 
-    CONSTRAINT "Stock_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -36,8 +34,8 @@ CREATE TABLE "Product" (
 CREATE TABLE "Order" (
     "id" TEXT NOT NULL,
     "buyerId" TEXT NOT NULL,
-
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
+
 );
 
 -- CreateTable
@@ -49,14 +47,16 @@ CREATE TABLE "_OrderToProduct" (
 -- CreateIndex
 CREATE UNIQUE INDEX "_OrderToProduct_AB_unique" ON "_OrderToProduct"("A", "B");
 
+
 -- CreateIndex
 CREATE INDEX "_OrderToProduct_B_index" ON "_OrderToProduct"("B");
 
 -- AddForeignKey
-ALTER TABLE "Stock" ADD CONSTRAINT "Stock_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "_ProductToSupplier" ADD CONSTRAINT "supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
 
 -- AddForeignKey
-ALTER TABLE "Stock" ADD CONSTRAINT "Stock_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "_ProductToSupplier" ADD CONSTRAINT "ProductId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_buyerId_fkey" FOREIGN KEY ("buyerId") REFERENCES "Buyer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

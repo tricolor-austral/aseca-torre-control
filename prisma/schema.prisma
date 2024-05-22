@@ -22,23 +22,15 @@ model Buyer{
 model Supplier{
   id          String    @id @default(uuid())
   name        String
-  Stocks      Stock[]
-}
-
-model Stock{
-  id          String    @id @default(uuid())
-  productId   String
-  qty         Int
-  supplierId  String
-  Supplier    Supplier  @relation(fields: [supplierId], references: [id])
-  Product     Product   @relation(fields: [productId], references: [id])
+  products    Product[]
 }
 
 model Product{
     id          String    @id @default(uuid())
     price       Float
     Order       Order[]
-    Stock       Stock[]
+    supplier    Supplier[]
+    qty         Int
 }
 
 model Order {
