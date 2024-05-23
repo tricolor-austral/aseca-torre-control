@@ -7,11 +7,15 @@ export class OrderRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateOrderDto) {
-    return this.prisma.order.create({
+    const order = await this.prisma.order.create({
       data: {
         buyerId: data.buyerId,
+        products: {
+          connect: data.productIds.map((id) => ({ id })),
+        },
       },
     });
+    return order;
   }
 
   async findAll() {

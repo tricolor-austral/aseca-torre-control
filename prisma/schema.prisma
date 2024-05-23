@@ -22,22 +22,22 @@ model Buyer{
 model Supplier{
   id          String    @id @default(uuid())
   name        String
-  products    Product[]
+  products    Product[] @relation("ProductSupplier")
 }
 
-model Product{
-    id          String    @id @default(uuid())
-    price       Float
-    Order       Order[]
-    supplier    Supplier[]
-    qty         Int
+model Product {
+  id       String   @id @default(uuid())
+  price    Float
+  qty         Int
+  orders   Order[]  @relation("OrderProducts")
+  supplier Supplier[] @relation("ProductSupplier")
 }
 
 model Order {
-    id          String    @id @default(uuid())
-    buyerId     String
-    Buyer       Buyer     @relation(fields: [buyerId], references: [id])
-    Products    Product[]
+  id       String    @id @default(uuid())
+  buyerId  String
+  Buyer    Buyer     @relation(fields: [buyerId], references: [id])
+  products Product[] @relation("OrderProducts")
 }
 
 
