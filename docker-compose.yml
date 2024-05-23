@@ -8,6 +8,8 @@ services:
       POSTGRES_USER: "user"
       POSTGRES_PASSWORD: "password"
       POSTGRES_DB: "mydb"
+    volumes:
+      - db_data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
 
@@ -21,3 +23,5 @@ services:
       - '8080:8080'
     depends_on:
       - db
+volumes:
+  db_data:

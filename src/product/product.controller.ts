@@ -9,7 +9,7 @@ export class ProductController {
     return await this.productService.getAllProducts();
   }
 
-  @Get('stock/:id')
+  @Get(':id')
   async checkIfThereIsStock(@Param('id') id: string) {
     return await this.productService.checkIfThereIsStock(id);
   }

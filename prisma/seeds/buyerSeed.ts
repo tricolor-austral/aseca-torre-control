@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  const numberOfBuyers = 100;
+  const numberOfBuyers = 5;
 
   const buyers = Array.from({ length: numberOfBuyers }).map((_, index) => ({
     name: `Buyer ${index + 1}`,

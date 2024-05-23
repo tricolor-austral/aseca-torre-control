@@ -7,6 +7,7 @@ async function main() {
   const products = Array.from({ length: 10 }).map(() => ({
     id: uuidv4(),
     price: parseFloat((Math.random() * 100).toFixed(2)),
+    qty: Math.floor(Math.random() * 100) + 1, // Genera una cantidad entre 1 y 100
   }));
 
   await prisma.product.createMany({
