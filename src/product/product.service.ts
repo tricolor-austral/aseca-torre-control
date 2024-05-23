@@ -11,6 +11,9 @@ export class ProductService {
     return await this.productRepository.hasStock(id);
   }
   async substractStock(id: string) {
-    return await this.productRepository.substractStock(id);
+    if (!(await this.checkIfThereIsStock(id))) {
+      return await this.productRepository.substractStock(id);
+    }
   }
+
 }
