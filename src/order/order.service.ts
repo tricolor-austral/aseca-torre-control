@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { OrderRepository } from './order.repository';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { StockRepository } from '../stock/stock.repository';
-import { StockServices } from '../stock/stock.services';
+import { ProductService } from '../product/product.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
-    private readonly stockservices: StockServices,
+    private readonly productServices: ProductService,
   ) {}
 
   async createOrder(data: CreateOrderDto) {
     const productIds = data.productIds;
     for (const id in productIds) {
-      await this.stockservices.restOneStock(id);
+      await this.productServices.substractStock(id);
     }
     return await this.orderRepository.create(data);
   }

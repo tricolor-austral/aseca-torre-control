@@ -28,7 +28,7 @@ model Supplier{
 model Product {
   id       String   @id @default(uuid())
   price    Float
-  qty         Int
+  qty       Int
   orders   Order[]  @relation("OrderProducts")
   supplier Supplier[] @relation("ProductSupplier")
 }
