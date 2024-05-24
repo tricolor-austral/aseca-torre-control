@@ -5,17 +5,27 @@ import { CreateOrderDto } from './dto/create-order.dto';
 @Injectable()
 export class OrderRepository {
   constructor(private readonly prisma: PrismaService) {}
-
   async create(data: CreateOrderDto) {
+    console.log('repositorio');
+
     const order = await this.prisma.order.create({
       data: {
         buyerId: data.buyerId,
         products: {
-          connect: data.productIds.map((id) => ({ id })),
+          createMany: {
+            data: data.products.map((product) => ({
+              productId: product.productIds,
+              qtyBought: product.qty,
+            })),
+          },
         },
       },
+      include: {
+        products: true,
+      },
     });
-    return order;
+
+    return order; // Se devuelve la orden creada junto con los productos asociados.
   }
 
   async findAll() {

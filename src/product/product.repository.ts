@@ -7,14 +7,14 @@ export class ProductRepository {
     return this.prismaService.product.findMany();
   }
 
-  async substractStock(id: string) {
+  async substractStock(id: string, qty: number) {
     return this.prismaService.product.update({
       where: {
         id: id,
       },
       data: {
         qty: {
-          decrement: 1,
+          decrement: qty,
         },
       },
     });

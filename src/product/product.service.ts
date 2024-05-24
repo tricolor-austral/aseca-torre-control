@@ -10,10 +10,9 @@ export class ProductService {
   async checkIfThereIsStock(id: string) {
     return await this.productRepository.hasStock(id);
   }
-  async substractStock(id: string) {
+  async substractStock(id: string, qty: number) {
     if (!(await this.checkIfThereIsStock(id))) {
-      return await this.productRepository.substractStock(id);
+      return await this.productRepository.substractStock(id, qty);
     }
   }
-
 }
