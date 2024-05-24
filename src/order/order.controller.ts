@@ -20,8 +20,4 @@ export class OrderController {
   async getOrderById(@Param('id') id: string) {
     return await this.orderService.getOrderById(id);
   }
-  @Put(':id')
-  async updateOrder(@Param('id') id: string, @Body() data: any) {
-    return await this.orderService.updateOrder(id, data);
-  }
 }

@@ -4,11 +4,13 @@ import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 import { OrderRepository } from './order.repository';
 import { ProductModule } from '../product/product.module';
+import { CrossDockingModule } from '../cross-docking/cross-docking.module';
+import { ShippingModule } from '../shipping/shipping.module';
 
 @Module({
   controllers: [OrderController],
   providers: [OrderService, OrderRepository, PrismaService],
   exports: [OrderRepository],
-  imports: [ProductModule],
+  imports: [ProductModule, CrossDockingModule, ShippingModule],
 })
 export class OrderModule {}
