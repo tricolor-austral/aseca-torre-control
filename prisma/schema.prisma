@@ -28,21 +28,25 @@ model Supplier{
 model Product {
   id       String   @id @default(uuid())
   price    Float
-  qty       Int
+  qty      Int
   supplier Supplier[] @relation("ProductSupplier")
+  orders   OrderProduct[]
 }
 
 model OrderProduct {
-  id        String @id @default(uuid())
+  id        String  @id @default(uuid())
+  order     Order   @relation(fields: [orderId], references: [id])
+  product Product  @relation(fields: [productId], references: [id])
+  qtyBought Int
   orderId   String
   productId String
-  qtyBought Int
 }
 
 model Order {
   id       String    @id @default(uuid())
   buyerId  String
   Buyer    Buyer     @relation(fields: [buyerId], references: [id])
+  products OrderProduct[]
 }
 
 

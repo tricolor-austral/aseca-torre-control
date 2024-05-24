@@ -6,5 +6,8 @@ export class CreateOrderDto {
   buyerId: string;
   @IsArray()
   @IsNotEmpty()
-  productIds: string[];
+  products: {
+    productIds: string;
+    qty: number;
+  }[];
 }

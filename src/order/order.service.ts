@@ -2,20 +2,49 @@ import { Injectable } from '@nestjs/common';
 import { OrderRepository } from './order.repository';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ProductService } from '../product/product.service';
+import { ShippingService } from '../shipping/shipping.service';
+import { CrossDockingService } from '../cross-docking/cross-docking.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
+    private readonly crossDocking: CrossDockingService,
     private readonly productServices: ProductService,
   ) {}
 
   async createOrder(data: CreateOrderDto) {
-    const productIds = data.productIds;
-    for (const id in productIds) {
-      await this.productServices.substractStock(id);
+    for (const product of data.products) {
+      const qty = await this.productServices.checkIfThereIsStock(
+        product.productIds,
+      );
+      if (!qty) {
+        throw new Error('No hay stock suficiente');
+      }
     }
-    return await this.orderRepository.create(data);
+    const order = await this.orderRepository.create(data);
+    //si la orden se creo bien resto el stock
+    if (order) {
+      for (const product of data.products) {
+        await this.productServices.substractStock(
+          product.productIds,
+          product.qty,
+        );
+      }
+    } else {
+      throw new Error('No se pudo crear la orden');
+    }
+    //le mando al shipping que reciba la orden,
+    //le mando al cross docking {orderDTO}
+
+    await ShippingService.recieveNewOrder(order.id, order.buyerId);
+    const orderDTO = {
+      orderId: order.id,
+      buyerId: order.buyerId,
+      productsId: order.products.map((product) => product.productId),
+    };
+    await this.crossDocking.sendOrderToCrossDocking(orderDTO);
+    return order;
   }
 
   async getOrders() {
@@ -24,13 +53,5 @@ export class OrderService {
 
   async getOrderById(id: string) {
     return await this.orderRepository.findById(id);
-  }
-
-  async updateOrder(id: string, data: any) {
-    return await this.orderRepository.update(id, data);
-  }
-
-  async deleteOrder(id: string) {
-    return await this.orderRepository.delete(id);
   }
 }
