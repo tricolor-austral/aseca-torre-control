@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { IorderRepository } from './IorderRepository';
+import { OrderOutput } from './OrderOutput';
 
 @Injectable()
-export class OrderRepository {
+export class OrderRepository implements IorderRepository {
   constructor(private readonly prisma: PrismaService) {}
-  async create(data: CreateOrderDto) {
+  async create(data: CreateOrderDto): Promise<OrderOutput> {
     console.log('repositorio');
 
     const order = await this.prisma.order.create({
@@ -24,8 +26,13 @@ export class OrderRepository {
         products: true,
       },
     });
+    const orderOutput = {
+      id: order.id,
+      buyerId: order.buyerId,
+      products: data.products,
+    } as OrderOutput;
 
-    return order; // Se devuelve la orden creada junto con los productos asociados.
+    return orderOutput; // Se devuelve la orden creada junto con los productos asociados.
   }
 
   async findAll() {

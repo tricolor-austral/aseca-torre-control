@@ -45,23 +45,27 @@ describe('orderService.spec.ts', () => {
     orderService = moduleFixture.get<OrderService>(OrderService);
   });
 
-  it('001_createOrder', () => {
-    return orderService
-      .createOrder({
-        buyerId: 'buyer_1',
-        products: [
-          {
-            productIds: 'f876258b-5755-4b59-92d7-d00c37230781',
-            qty: 1,
-          },
-        ],
-      })
-      .then((data) => {
-        expect(data).toBeDefined();
-        expect(data.buyerId).toEqual('buyer_1');
-        expect(data.products[0].productId).toEqual(
-          'f876258b-5755-4b59-92d7-d00c37230781',
-        );
-      });
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('should create an order', async () => {
+    const orderDto: CreateOrderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: 'product_1',
+          qty: 1,
+        },
+      ],
+    };
+
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    expect(createdOrder).toBeDefined();
+    expect(createdOrder.buyerId).toEqual(orderDto.buyerId);
+    expect(createdOrder.products[0].productIds).toEqual(
+      orderDto.products[0].productIds,
+    );
   });
 });
