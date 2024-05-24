@@ -7,6 +7,6 @@ export class ShippingService {
       orderId: orderId,
       buyerId: buyerId,
     };
-    //le mando a pepe
+    fetch('https://localhost:8080', { method: 'POST' });
   }
 }
