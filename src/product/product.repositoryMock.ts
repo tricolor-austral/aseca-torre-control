@@ -1,8 +1,9 @@
 import { Product } from '@prisma/client';
 import { ProductRepository } from './product.repository';
+import { IProductRepository } from './IproductRepository';
 import {CreateProductDto} from "./dto/CreateProductDto";
 
-export class ProductRepositoryMock {
+export class ProductRepositoryMock implements IProductRepository {
   private products: Product[] = [];
   private nextId = '1';
 

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { OrderRepository } from './order.repository';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ProductService } from '../product/product.service';
 import { ShippingService } from '../shipping/shipping.service';
 import { CrossDockingService } from '../cross-docking/cross-docking.service';
+import { IorderRepository } from './IorderRepository';
 
 @Injectable()
 export class OrderService {
   constructor(
-    private readonly orderRepository: OrderRepository,
+    private readonly orderRepository: IorderRepository,
     private readonly crossDocking: CrossDockingService,
     private readonly productServices: ProductService,
   ) {}
@@ -41,7 +41,7 @@ export class OrderService {
     const orderDTO = {
       orderId: order.id,
       buyerId: order.buyerId,
-      productsId: order.products.map((product) => product.productId),
+      productsId: order.products.map((product) => product.productIds),
     };
     await this.crossDocking.sendOrderToCrossDocking(orderDTO);
     return order;
@@ -49,9 +49,5 @@ export class OrderService {
 
   async getOrders() {
     return await this.orderRepository.findAll();
-  }
-
-  async getOrderById(id: string) {
-    return await this.orderRepository.findById(id);
   }
 }
