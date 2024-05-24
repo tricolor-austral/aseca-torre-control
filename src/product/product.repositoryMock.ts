@@ -1,5 +1,6 @@
 import { Product } from '@prisma/client';
 import { ProductRepository } from './product.repository';
+import {CreateProductDto} from "./dto/CreateProductDto";
 
 export class ProductRepositoryMock {
   private products: Product[] = [];
@@ -7,6 +8,13 @@ export class ProductRepositoryMock {
 
   findAll(): Promise<Product[]> {
     return Promise.resolve(this.products);
+  }
+
+  createProduct(data: CreateProductDto): Promise<Product> {
+    const newProductwithID = { ...data, id: this.nextId };
+    this.products.push(newProductwithID);
+    this.nextId = (BigInt(this.nextId) + BigInt(1)).toString();
+    return Promise.resolve(newProductwithID);
   }
 
   substractStock(id: string, qty: number) {
