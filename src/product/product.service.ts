@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ProductRepository } from './product.repository';
 import { CreateProductDto } from './dto/CreateProductDto';
-import { SupplierService } from '../supplier/supplier.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly productRepository: ProductRepository,
-    private readonly supplierService: SupplierService,
   ) {}
 
   async createProduct(data: CreateProductDto) {

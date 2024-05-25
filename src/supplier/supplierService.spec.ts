@@ -1,29 +1,34 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { AppModule } from '../app.module';
 import { SupplierService } from './supplier.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupplierRepositoryMock } from './supplier.repositoryMock';
+import { SupplierRepository } from './supplier.repository';
 
 describe('supplierService.spec.ts', () => {
   let app: INestApplication;
   let supplierService: SupplierService;
-  let supplierRepositoryMock: SupplierRepositoryMock;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-      providers: [PrismaService, SupplierService, SupplierRepositoryMock],
+      providers: [
+          PrismaService,
+          SupplierService,
+          {
+              provide: SupplierRepository,
+              useClass: SupplierRepositoryMock,
+          },
+
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
 
     supplierService = moduleFixture.get<SupplierService>(SupplierService);
-    supplierRepositoryMock = moduleFixture.get<SupplierRepositoryMock>(
-      SupplierRepositoryMock,
-    );
   });
+
+
 
   it('001_createSupplier', async () => {
     const newSuplier = await supplierService.createSupplier({
