@@ -17,6 +17,11 @@ export class ProductService {
     return stock > qty;
   }
   async substractStock(id: string, qty: number) {
-    return await this.productRepository.substractStock(id, qty);
+    if(await this.checkIfThereIsStock(id, qty)) {
+      return await this.productRepository.substractStock(id, qty);
+    }
+    else{
+      throw new Error(`Insufficient stock for product ${id}. Requested: ${qty}`);
+    }
   }
 }

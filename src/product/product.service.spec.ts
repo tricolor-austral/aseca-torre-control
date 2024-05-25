@@ -31,17 +31,75 @@ describe('orderService.spec.ts', () => {
 
   it('001_creatingAproduct', async () => {
     const newProd = await productService.createProduct({
-      productId: '1',
       price: 100,
       qty: 1,
       suppliers: [],
     });
 
-    expect(newProd).toEqual({
-      id: '1',
+    expect(newProd.price).toEqual(100);
+    expect(newProd.qty).toEqual(1);
+  });
+
+  it('002_creatingAproductWithMoreThan1qty', async () => {
+      const newProd = await productService.createProduct({
+          price: 100,
+          qty: 5,
+          suppliers: [],
+      });
+
+      expect(newProd.price).toEqual(100);
+      expect(newProd.qty).toEqual(5);
+  })
+
+    it('003_checkIfThereIsStock', async () => {
+        const newProd = await productService.createProduct({
+            price: 100,
+            qty: 10,
+            suppliers: [],
+        });
+
+        const hasStock = await productService.checkIfThereIsStock(newProd.id, 5);
+        expect(hasStock).toEqual(true);
+    })
+
+    it('004_checkIfThereIsStockWithMoreThanAvailable', async () => {
+        const newProd = await productService.createProduct({
+            price: 100,
+            qty: 10,
+            suppliers: [],
+        });
+
+        const hasStock = await productService.checkIfThereIsStock(newProd.id, 15);
+        expect(hasStock).toEqual(false);
+    })
+
+  it('005_substractingStock', async () => {
+    const newProd = await productService.createProduct({
       price: 100,
-      qty: 1,
+      qty: 10,
       suppliers: [],
     });
+
+    const updatedProd = await productService.substractStock(newProd.id, 5);
+    expect(updatedProd.qty).toEqual(5);
   });
+
+
+    it('006_substractingStockWithMoreThanAvailable', async () => {
+        const newProd = await productService.createProduct({
+            price: 100,
+            qty: 10,
+            suppliers: [],
+        });
+
+        await expect(productService.substractStock(newProd.id, 15)).rejects.toThrow(`Insufficient stock for product ${newProd.id}. Requested: ${15}`);
+
+    });
+
+
+
+
+
+
+
 });

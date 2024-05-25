@@ -11,7 +11,6 @@ export class ProductRepository {
   async createProduct(data: CreateProductDto) {
     return this.prismaService.product.create({
       data: {
-        id: data.productId,
         qty: data.qty,
         price: data.price,
         supplier: {
