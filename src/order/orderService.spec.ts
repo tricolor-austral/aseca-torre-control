@@ -23,18 +23,26 @@ describe('OrderService', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       providers: [
         PrismaService,
-        OrderService,
-        OrderRepository,
-        OrderRepositoryMock,
-        ProductRepository,
-        ProductRepositoryMock,
-        SupplierRepository,
-        SupplierRepositoryMock,
+        {
+          provide: OrderService,
+          useClass: OrderService,
+        },
+        {
+          provide: OrderRepository,
+          useClass: OrderRepositoryMock,
+        },
+        {
+          provide: ProductRepository,
+          useClass: ProductRepositoryMock,
+        },
+        {
+          provide: SupplierRepository,
+          useClass: SupplierRepositoryMock,
+        },
         CrossDockingService,
-        ProductService,
         ShippingService,
         SupplierService,
-        SupplierRepository,
+        ProductService,
       ],
     }).compile();
 
@@ -47,8 +55,8 @@ describe('OrderService', () => {
   });
   //Primer paso -> No puedo crear la orden no hay stock
   it('test 001 should not create an order if there is not enough stock', async () => {
-    const sup = await createRandomSupplier();
-    const prod = await createRandomProduct([sup.id]);
+    const prod = await createRandomProduct();
+    const sup = await createRandomSupplier([prod.id]);
     const orderDto = {
       buyerId: 'buyer_10',
       products: [
@@ -76,8 +84,8 @@ describe('OrderService', () => {
   });
   //CREO UNA ORDEN SIN COMPRADOR
   it('test 003 should create an order without a buyer', async () => {
-    const sup = await createRandomSupplier();
-    const prod = await createRandomProduct([sup.id]);
+    const prod = await createRandomProduct();
+    const sup = await createRandomSupplier([prod.id]);
     const orderDto = {
       buyerId: '',
       products: [
@@ -92,29 +100,12 @@ describe('OrderService', () => {
       'No hay un comprador',
     );
   });
-  //CREO UNA ORDEN CON UN BUYER_ID INEXISTENTE
-  it('test 004 should create an order with a non-existent buyer', async () => {
-    const sup = await createRandomSupplier();
-    const prod = await createRandomProduct([sup.id]);
-    const orderDto = {
-      buyerId: 'buyer_2',
-      products: [
-        {
-          productIds: prod.id,
-          qty: 1,
-        },
-      ],
-    } as CreateOrderDto;
 
-    await expect(orderService.createOrder(orderDto)).rejects.toThrow(
-      'No hay stock suficiente',
-    );
-  });
-
-  it('should create an order of one item', async () => {
-    const sup = await createRandomSupplier();
-    const prod = await createRandomProduct([sup.id]);
+  it('test 004 should create an order of one item', async () => {
+    const prod = await createRandomProduct();
+    const sup = await createRandomSupplier([prod.id]);
     const orderDto = {
+      buyerId: 'buyer_1',
       products: [
         {
           productIds: prod.id,
@@ -131,21 +122,109 @@ describe('OrderService', () => {
       orderDto.products[0].productIds,
     );
   });
+  //Creo una orden de 2 items
+  it('test 005 should create an order of two items', async () => {
+    const prod1 = await createRandomProduct();
+    const prod2 = await createRandomProduct();
+    const sup = await createRandomSupplier([prod2.id, prod1.id]);
 
-  async function createRandomProduct(supplierIds: string[]) {
-    const val: string = randomStringGenerator();
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod1.id,
+          qty: 1,
+        },
+        {
+          productIds: prod2.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    expect(createdOrder).toBeDefined();
+    expect(createdOrder.buyerId).toEqual(orderDto.buyerId);
+    expect(createdOrder.products[0].productIds).toEqual(
+      orderDto.products[0].productIds,
+    );
+    expect(createdOrder.products[1].productIds).toEqual(
+      orderDto.products[1].productIds,
+    );
+  });
+  //Creo orden de 2 productos de 2 suppliers distintos
+  it('test 006 should create an order of two items from two different suppliers', async () => {
+    const prod1 = await createRandomProduct();
+    const prod2 = await createRandomProduct();
+    const sup1 = await createRandomSupplier([prod1.id]);
+    const sup2 = await createRandomSupplier([prod2.id]);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod1.id,
+          qty: 1,
+        },
+        {
+          productIds: prod2.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    expect(createdOrder).toBeDefined();
+    expect(createdOrder.buyerId).toEqual(orderDto.buyerId);
+    expect(createdOrder.products[0].productIds).toEqual(
+      orderDto.products[0].productIds,
+    );
+    expect(createdOrder.products[1].productIds).toEqual(
+      orderDto.products[1].productIds,
+    );
+  });
+  //create order with products from the same supplier
+  it('test 007 should create an order with products from the same supplier', async () => {
+    const prod1 = await createRandomProduct();
+    const prod2 = await createRandomProduct();
+    const sup = await createRandomSupplier([prod1.id, prod2.id]);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod1.id,
+          qty: 1,
+        },
+        {
+          productIds: prod2.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    expect(createdOrder).toBeDefined();
+    expect(createdOrder.buyerId).toEqual(orderDto.buyerId);
+    expect(createdOrder.products[0].productIds).toEqual(
+      orderDto.products[0].productIds,
+    );
+    expect(createdOrder.products[1].productIds).toEqual(
+      orderDto.products[1].productIds,
+    );
+  });
+
+  async function createRandomProduct() {
     return await productService.createProduct({
-      productId: val,
       qty: 10,
       price: 100,
-      suppliers: supplierIds,
     });
   }
-  async function createRandomSupplier() {
-    const val: string = randomStringGenerator();
+  async function createRandomSupplier(productsIds: string[] = []) {
     return await supplierService.createSupplier({
-      id: val,
-      name: 'Supplier nro: ' + val,
+      name: 'Supplier nro: ' + randomStringGenerator(),
+      products: productsIds,
     });
   }
 });

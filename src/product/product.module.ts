@@ -4,9 +4,11 @@ import { ProductService } from './product.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductRepository } from './product.repository';
 import { ProductRepositoryMock } from './product.repositoryMock';
+import { SupplierModule } from '../supplier/supplier.module';
 
 @Module({
   controllers: [ProductController],
+  imports: [SupplierModule],
   providers: [
     ProductService,
     ProductRepository,

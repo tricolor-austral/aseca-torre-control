@@ -13,11 +13,6 @@ export class ProductRepository {
       data: {
         qty: data.qty,
         price: data.price,
-        supplier: {
-          connect: data.suppliers.map((supplier) => ({
-            id: supplier,
-          })),
-        },
       },
     });
   }

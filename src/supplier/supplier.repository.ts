@@ -29,6 +29,9 @@ export class SupplierRepository {
     return this.prismaService.supplier.create({
       data: {
         name: data.name,
+        products: {
+          connect: data.products.map((id) => ({ id })),
+        },
       },
     });
   }
