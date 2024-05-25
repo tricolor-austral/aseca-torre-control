@@ -28,7 +28,6 @@ export class SupplierRepository {
   async createSupplier(data: CreateSupplierDto) {
     return this.prismaService.supplier.create({
       data: {
-        id: data.id,
         name: data.name,
       },
     });

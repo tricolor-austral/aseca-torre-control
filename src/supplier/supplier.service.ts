@@ -12,7 +12,7 @@ export class SupplierService {
   findAllbyProduct(id: string) {
     return this.supplierRepository.getSuppliersByProductId(id);
   }
-  createSupplier(data: CreateSupplierDto) {
+  async createSupplier(data: CreateSupplierDto) {
     return this.supplierRepository.createSupplier(data);
   }
 }

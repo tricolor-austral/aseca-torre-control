@@ -1,8 +1,6 @@
 import { SupplierRepository } from './supplier.repository';
 import { Supplier } from '@prisma/client';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
-import { ProductRepository } from '../product/product.repository';
-import { ProductRepositoryMock } from '../product/product.repositoryMock';
 
 export class SupplierRepositoryMock extends SupplierRepository {
   private supplier: Supplier[] = [];
@@ -17,6 +15,16 @@ export class SupplierRepositoryMock extends SupplierRepository {
     this.nextId = (BigInt(this.nextId) + BigInt(1)).toString();
     return Promise.resolve(newSupplier);
   }
+
+    async getSuppliersByProductId(id: string) {
+      const productsIDs = [];
+      for (let i = 0; i < this.supplier.length; i++) {
+        productsIDs.push(i.toString())
+      }
+      const suppliersWithProduct = this.supplier.filter((supplier) => productsIDs.includes(supplier.id)).map((supplier) => supplier.id);
+      return suppliersWithProduct[0];
+    }
+
   async clear() {
     this.supplier = [];
     this.nextId = '1';
