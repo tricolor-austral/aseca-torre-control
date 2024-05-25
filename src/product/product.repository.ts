@@ -36,8 +36,8 @@ export class ProductRepository implements IProductRepository {
       },
     });
   }
-  async hasStock(id: string) {
-    return this.prismaService.product.findFirst({
+  async getStock(id: string) {
+    const product = await this.prismaService.product.findFirst({
       where: {
         id: id,
         qty: {
@@ -45,5 +45,7 @@ export class ProductRepository implements IProductRepository {
         },
       },
     });
+    return Promise.resolve(product.qty);
   }
+
 }

@@ -13,9 +13,11 @@ export class ProductService {
     return this.productRepository.findAll();
   }
   async checkIfThereIsStock(id: string) {
-    return await this.productRepository.hasStock(id);
+    const stock = await this.productRepository.getStock(id);
+    return stock > 0;
   }
   async substractStock(id: string, qty: number) {
+    // CORREGIR: chequeamos si hay stock pero la cantidad a restar puede ser mayor a la cantidad en stock
     if (!(await this.checkIfThereIsStock(id))) {
       return await this.productRepository.substractStock(id, qty);
     }

@@ -25,9 +25,8 @@ export class ProductRepositoryMock implements IProductRepository {
     }
   }
 
-  hasStock(id: string) {
-    const product = this.products.find((product) => product.id === id);
-    return Promise.resolve(product?.qty > 0);
+  getStock(id: string) {
+    return  Promise.resolve(this.products.find((product) => product.id === id).qty);
   }
 }
 
