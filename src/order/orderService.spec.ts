@@ -1,6 +1,4 @@
-import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../app.module';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderRepository } from './order.repository';
 import { OrderService } from './order.service';
@@ -13,22 +11,16 @@ import { OrderRepositoryMock } from './order.repositoryMock';
 import { ProductRepositoryMock } from '../product/product.repositoryMock';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ProductRepository } from '../product/product.repository';
-import { CreateProductDto } from '../product/dto/CreateProductDto';
 import { SupplierRepositoryMock } from '../supplier/supplier.repositoryMock';
-import { CreateSupplierDto } from '../supplier/dto/create-supplier.dto';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 
 describe('OrderService', () => {
-  let app: INestApplication;
   let orderService: OrderService;
   let productService: ProductService;
   let supplierService: SupplierService;
-  let supplierRepositoryMock: SupplierRepositoryMock;
-  let productRepositoryMock: ProductRepositoryMock;
-  let orderRepositoryMock: OrderRepositoryMock;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
       providers: [
         PrismaService,
         OrderService,
@@ -46,34 +38,22 @@ describe('OrderService', () => {
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
     orderService = moduleFixture.get<OrderService>(OrderService);
     productService = moduleFixture.get<ProductService>(ProductService);
     supplierService = moduleFixture.get<SupplierService>(SupplierService);
-    supplierRepositoryMock = moduleFixture.get<SupplierRepositoryMock>(
-      SupplierRepositoryMock,
-    );
-    productRepositoryMock = moduleFixture.get<ProductRepositoryMock>(
-      ProductRepositoryMock,
-    );
-    orderRepositoryMock =
-      moduleFixture.get<OrderRepositoryMock>(OrderRepositoryMock);
-
-    // Limpia los datos de los mocks
-    await supplierRepositoryMock.clear();
-    await productRepositoryMock.clear();
-    await orderRepositoryMock.clear();
   });
-  afterEach(async () => {
-    await app.close();
+  it('should be defined', () => {
+    expect(orderService).toBeDefined();
   });
-  it('should not create an order if there is not enough stock', async () => {
+  //Primer paso -> No puedo crear la orden no hay stock
+  it('test 001 should not create an order if there is not enough stock', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct([sup.id]);
     const orderDto = {
       buyerId: 'buyer_10',
       products: [
         {
-          productIds: 'product_100',
+          productIds: prod.id,
           qty: 30,
         },
       ],
@@ -83,13 +63,61 @@ describe('OrderService', () => {
       'No hay stock suficiente',
     );
   });
+  //CREO UNA ORDEN VACIA
+  it('test 002 should create an empty order', async () => {
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [],
+    } as CreateOrderDto;
 
-  it('should create an order from existing product', async () => {
+    await expect(orderService.createOrder(orderDto)).rejects.toThrow(
+      'No hay productos en la orden',
+    );
+  });
+  //CREO UNA ORDEN SIN COMPRADOR
+  it('test 003 should create an order without a buyer', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct([sup.id]);
+    const orderDto = {
+      buyerId: '',
+      products: [
+        {
+          productIds: prod.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    await expect(orderService.createOrder(orderDto)).rejects.toThrow(
+      'No hay un comprador',
+    );
+  });
+  //CREO UNA ORDEN CON UN BUYER_ID INEXISTENTE
+  it('test 004 should create an order with a non-existent buyer', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct([sup.id]);
     const orderDto = {
       buyerId: 'buyer_2',
       products: [
         {
-          productIds: 'product_100',
+          productIds: prod.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    await expect(orderService.createOrder(orderDto)).rejects.toThrow(
+      'No hay stock suficiente',
+    );
+  });
+
+  it('should create an order of one item', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct([sup.id]);
+    const orderDto = {
+      products: [
+        {
+          productIds: prod.id,
           qty: 1,
         },
       ],
@@ -104,22 +132,20 @@ describe('OrderService', () => {
     );
   });
 
-  async function instanceSuppliersAndProducts(
-    supplierService: SupplierService,
-    productService: ProductService,
-  ) {
-    const supplierDto = {
-      id: 'supplier_38',
-      name: 'Supplier 1',
-    } as CreateSupplierDto;
-    const productDto = {
-      productId: 'product_100',
-      qty: 20,
+  async function createRandomProduct(supplierIds: string[]) {
+    const val: string = randomStringGenerator();
+    return await productService.createProduct({
+      productId: val,
+      qty: 10,
       price: 100,
-      suppliers: ['supplier_38'],
-    } as CreateProductDto;
-
-    await supplierService.createSupplier(supplierDto);
-    await productService.createProduct(productDto);
+      suppliers: supplierIds,
+    });
+  }
+  async function createRandomSupplier() {
+    const val: string = randomStringGenerator();
+    return await supplierService.createSupplier({
+      id: val,
+      name: 'Supplier nro: ' + val,
+    });
   }
 });

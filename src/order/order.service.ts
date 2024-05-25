@@ -14,6 +14,12 @@ export class OrderService {
   ) {}
 
   async createOrder(data: CreateOrderDto) {
+    if (!data.products.length) {
+      throw new Error('No hay productos en la orden');
+    }
+    if (!data.buyerId) {
+      throw new Error('No hay un comprador');
+    }
     for (const product of data.products) {
       const qty = await this.productServices.checkIfThereIsStock(
         product.productIds,
