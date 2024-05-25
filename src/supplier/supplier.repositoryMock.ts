@@ -10,7 +10,6 @@ export class SupplierRepositoryMock extends SupplierRepository {
   }
 
   async createSupplier(data: CreateSupplierDto) {
-    console.log("creando supplier")
     const newSupplier = { ...data, id: this.nextId };
     this.supplier.push(newSupplier);
     this.nextId = (BigInt(this.nextId) + BigInt(1)).toString();
