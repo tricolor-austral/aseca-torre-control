@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupplierRepository } from './supplier.repository';
+import { CreateSupplierDto } from './dto/create-supplier.dto';
 
 @Injectable()
 export class SupplierService {
@@ -10,5 +11,8 @@ export class SupplierService {
 
   findAllbyProduct(id: string) {
     return this.supplierRepository.getSuppliersByProductId(id);
+  }
+  createSupplier(data: CreateSupplierDto) {
+    return this.supplierRepository.createSupplier(data);
   }
 }

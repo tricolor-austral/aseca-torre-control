@@ -1,10 +1,9 @@
 import { OrderRepository } from './order.repository';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from '@prisma/client';
-import { IorderRepository } from './IorderRepository';
-import { OrderOutput } from './OrderOutput';
+import { OrderOutput } from './dto/OrderOutput';
 
-export class OrderRepositoryMock implements IorderRepository {
+export class OrderRepositoryMock extends OrderRepository {
   private orders: Order[] = [];
   private nextId = '1';
 
@@ -20,10 +19,12 @@ export class OrderRepositoryMock implements IorderRepository {
     return Promise.resolve(orderOutput);
   }
 
-
-
   findAll(): Promise<Awaited<Order[]>> {
     return Promise.resolve(this.orders);
+  }
+  clear() {
+    this.orders = [];
+    this.nextId = '1';
   }
 }
 

@@ -15,9 +15,4 @@ export class OrderController {
   async createOrder(@Body() data: CreateOrderDto) {
     return await this.orderService.createOrder(data);
   }
-
-  @Get(':id')
-  async getOrderById(@Param('id') id: string) {
-    return await this.orderService.getOrderById(id);
-  }
 }

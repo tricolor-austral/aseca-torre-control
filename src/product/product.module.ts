@@ -3,10 +3,16 @@ import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductRepository } from './product.repository';
+import { ProductRepositoryMock } from './product.repositoryMock';
 
 @Module({
   controllers: [ProductController],
-  providers: [ProductService, ProductRepository, PrismaService],
+  providers: [
+    ProductService,
+    ProductRepository,
+    PrismaService,
+    ProductRepositoryMock,
+  ],
   exports: [ProductService],
 })
 export class ProductModule {}

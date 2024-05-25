@@ -3,12 +3,12 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { ProductService } from '../product/product.service';
 import { ShippingService } from '../shipping/shipping.service';
 import { CrossDockingService } from '../cross-docking/cross-docking.service';
-import { IorderRepository } from './IorderRepository';
+import { OrderRepository } from './order.repository';
 
 @Injectable()
 export class OrderService {
   constructor(
-    private readonly orderRepository: IorderRepository,
+    private readonly orderRepository: OrderRepository,
     private readonly crossDocking: CrossDockingService,
     private readonly productServices: ProductService,
   ) {}

@@ -1,9 +1,8 @@
 import { Product } from '@prisma/client';
 import { ProductRepository } from './product.repository';
-import { IProductRepository } from './IproductRepository';
-import {CreateProductDto} from "./dto/CreateProductDto";
+import { CreateProductDto } from './dto/CreateProductDto';
 
-export class ProductRepositoryMock implements IProductRepository {
+export class ProductRepositoryMock extends ProductRepository {
   private products: Product[] = [];
   private nextId = '1';
 
@@ -23,14 +22,21 @@ export class ProductRepositoryMock implements IProductRepository {
     if (product) {
       product.qty -= qty;
     }
+    return Promise.resolve(product);
   }
 
   getStock(id: string) {
-    return  Promise.resolve(this.products.find((product) => product.id === id).qty);
+    return Promise.resolve(
+      this.products.find((product) => product.id === id).qty,
+    );
+  }
+  clear() {
+    this.products = [];
+    this.nextId = '1';
   }
 }
 
-export const orderRepositoryMockProvider = {
+export const productRepositoryMock = {
   provide: ProductRepository,
   useClass: ProductRepositoryMock,
 };

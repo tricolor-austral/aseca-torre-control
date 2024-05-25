@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { IorderRepository } from './IorderRepository';
-import { OrderOutput } from './OrderOutput';
+import { OrderOutput } from './dto/OrderOutput';
 
 @Injectable()
-export class OrderRepository implements IorderRepository {
+export class OrderRepository {
   constructor(private readonly prisma: PrismaService) {}
   async create(data: CreateOrderDto): Promise<OrderOutput> {
     console.log('repositorio');

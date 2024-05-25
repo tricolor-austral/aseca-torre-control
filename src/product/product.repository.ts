@@ -1,9 +1,8 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { IProductRepository } from './IproductRepository';
-import {CreateProductDto} from "./dto/CreateProductDto";
+import { CreateProductDto } from './dto/CreateProductDto';
 @Injectable()
-export class ProductRepository implements IProductRepository {
+export class ProductRepository {
   constructor(private prismaService: PrismaService) {}
   async findAll() {
     return this.prismaService.product.findMany();
@@ -19,7 +18,7 @@ export class ProductRepository implements IProductRepository {
           connect: data.suppliers.map((supplier) => ({
             id: supplier,
           })),
-        }
+        },
       },
     });
   }
@@ -47,5 +46,4 @@ export class ProductRepository implements IProductRepository {
     });
     return Promise.resolve(product.qty);
   }
-
 }
