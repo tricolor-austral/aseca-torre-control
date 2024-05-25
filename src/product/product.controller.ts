@@ -10,7 +10,7 @@ export class ProductController {
   }
 
   @Get(':id')
-  async checkIfThereIsStock(@Param('id') id: string) {
-    return await this.productService.checkIfThereIsStock(id);
+  async checkIfThereIsStock(@Param('id') id: string, qty: number) {
+    return await this.productService.checkIfThereIsStock(id, qty);
   }
 }

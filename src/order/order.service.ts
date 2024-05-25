@@ -17,6 +17,7 @@ export class OrderService {
     for (const product of data.products) {
       const qty = await this.productServices.checkIfThereIsStock(
         product.productIds,
+        product.qty,
       );
       if (!qty) {
         throw new Error('No hay stock suficiente');

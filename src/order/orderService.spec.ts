@@ -17,7 +17,7 @@ import { CreateProductDto } from '../product/dto/CreateProductDto';
 import { SupplierRepositoryMock } from '../supplier/supplier.repositoryMock';
 import { CreateSupplierDto } from '../supplier/dto/create-supplier.dto';
 
-describe('orderService.spec.ts', () => {
+describe('OrderService', () => {
   let app: INestApplication;
   let orderService: OrderService;
   let productService: ProductService;
@@ -31,22 +31,13 @@ describe('orderService.spec.ts', () => {
       imports: [AppModule],
       providers: [
         PrismaService,
-        {
-          provide: OrderService,
-          useClass: OrderService,
-        },
-        {
-          provide: OrderRepository,
-          useClass: OrderRepositoryMock,
-        },
-        {
-          provide: ProductRepository,
-          useClass: ProductRepositoryMock,
-        },
-        {
-          provide: SupplierRepository,
-          useClass: SupplierRepositoryMock,
-        },
+        OrderService,
+        OrderRepository,
+        OrderRepositoryMock,
+        ProductRepository,
+        ProductRepositoryMock,
+        SupplierRepository,
+        SupplierRepositoryMock,
         CrossDockingService,
         ProductService,
         ShippingService,
@@ -60,78 +51,50 @@ describe('orderService.spec.ts', () => {
     orderService = moduleFixture.get<OrderService>(OrderService);
     productService = moduleFixture.get<ProductService>(ProductService);
     supplierService = moduleFixture.get<SupplierService>(SupplierService);
-    supplierRepositoryMock = moduleFixture.get<SupplierRepository>(
-      SupplierRepository,
-    ) as SupplierRepositoryMock;
-    productRepositoryMock = moduleFixture.get<ProductRepository>(
-      ProductRepository,
-    ) as ProductRepositoryMock;
-    orderRepositoryMock = moduleFixture.get<OrderRepository>(
-      OrderRepository,
-    ) as OrderRepositoryMock;
-  });
+    supplierRepositoryMock = moduleFixture.get<SupplierRepositoryMock>(
+      SupplierRepositoryMock,
+    );
+    productRepositoryMock = moduleFixture.get<ProductRepositoryMock>(
+      ProductRepositoryMock,
+    );
+    orderRepositoryMock =
+      moduleFixture.get<OrderRepositoryMock>(OrderRepositoryMock);
 
+    // Limpia los datos de los mocks
+    await supplierRepositoryMock.clear();
+    await productRepositoryMock.clear();
+    await orderRepositoryMock.clear();
+  });
   afterEach(async () => {
     await app.close();
-    supplierRepositoryMock.clear();
-    productRepositoryMock.clear();
-    orderRepositoryMock.clear();
   });
-
-  //Primer paso -> Chequear si hay stock
-  it('create_order_from_not_enough_stock_product_1', async () => {
-    const supplierDto = {
-      id: 'supplier_10',
-      name: 'Supplier 1',
-    } as CreateSupplierDto;
+  it('should not create an order if there is not enough stock', async () => {
     const orderDto = {
       buyerId: 'buyer_10',
       products: [
         {
-          productIds: 'product_10',
+          productIds: 'product_100',
           qty: 30,
         },
       ],
     } as CreateOrderDto;
-    const productDto = {
-      productId: 'product_10',
-      qty: 29,
-      price: 100,
-      suppliers: ['supplier_10'],
-    } as CreateProductDto;
-    await supplierService.createSupplier(supplierDto);
-    await productService.createProduct(productDto);
 
-    try {
-      await orderService.createOrder(orderDto);
-    } catch (error) {
-      expect(error).toBeDefined();
-      expect(error.message).toBe('No hay stock suficiente');
-    }
+    await expect(orderService.createOrder(orderDto)).rejects.toThrow(
+      'No hay stock suficiente',
+    );
   });
 
-  it('create_order_from_existing_product_', async () => {
-    const supplierDto = {
-      id: 'supplier_2',
-      name: 'Supplier 1',
-    } as CreateSupplierDto;
+  it('should create an order from existing product', async () => {
     const orderDto = {
       buyerId: 'buyer_2',
       products: [
         {
-          productIds: 'product_1',
+          productIds: 'product_100',
           qty: 1,
         },
       ],
     } as CreateOrderDto;
-    const productDto = {
-      productId: 'product_2',
-      qty: 50,
-      price: 100,
-      suppliers: ['supplier_2'],
-    } as CreateProductDto;
-    await supplierService.createSupplier(supplierDto);
-    await productService.createProduct(productDto);
+
     const createdOrder = await orderService.createOrder(orderDto);
 
     expect(createdOrder).toBeDefined();
@@ -140,4 +103,23 @@ describe('orderService.spec.ts', () => {
       orderDto.products[0].productIds,
     );
   });
+
+  async function instanceSuppliersAndProducts(
+    supplierService: SupplierService,
+    productService: ProductService,
+  ) {
+    const supplierDto = {
+      id: 'supplier_38',
+      name: 'Supplier 1',
+    } as CreateSupplierDto;
+    const productDto = {
+      productId: 'product_100',
+      qty: 20,
+      price: 100,
+      suppliers: ['supplier_38'],
+    } as CreateProductDto;
+
+    await supplierService.createSupplier(supplierDto);
+    await productService.createProduct(productDto);
+  }
 });

@@ -33,4 +33,7 @@ export class SupplierRepository {
       },
     });
   }
+  async clear() {
+    this.prismaService.supplier.deleteMany();
+  }
 }

@@ -22,13 +22,8 @@ export class OrderRepositoryMock extends OrderRepository {
   findAll(): Promise<Awaited<Order[]>> {
     return Promise.resolve(this.orders);
   }
-  clear() {
+  async clear() {
     this.orders = [];
     this.nextId = '1';
   }
 }
-
-export const orderRepositoryMockProvider = {
-  provide: OrderRepository,
-  useClass: OrderRepositoryMock,
-};

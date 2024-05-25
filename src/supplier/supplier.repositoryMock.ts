@@ -17,7 +17,7 @@ export class SupplierRepositoryMock extends SupplierRepository {
     this.nextId = (BigInt(this.nextId) + BigInt(1)).toString();
     return Promise.resolve(newSupplier);
   }
-  clear() {
+  async clear() {
     this.supplier = [];
     this.nextId = '1';
   }

@@ -46,4 +46,7 @@ export class ProductRepository {
     });
     return Promise.resolve(product.qty);
   }
+  async clear() {
+    await this.prismaService.product.deleteMany();
+  }
 }

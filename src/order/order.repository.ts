@@ -50,10 +50,7 @@ export class OrderRepository {
       data,
     });
   }
-
-  async delete(id: string) {
-    return this.prisma.order.delete({
-      where: { id },
-    });
+  async clear() {
+    await this.prisma.order.deleteMany();
   }
 }

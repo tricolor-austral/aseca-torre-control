@@ -30,7 +30,7 @@ export class ProductRepositoryMock extends ProductRepository {
       this.products.find((product) => product.id === id).qty,
     );
   }
-  clear() {
+  async clear(): Promise<void> {
     this.products = [];
     this.nextId = '1';
   }
