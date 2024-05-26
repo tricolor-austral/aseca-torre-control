@@ -4,9 +4,16 @@ import { Injectable } from '@nestjs/common';
 export class ShippingService {
   public static async recieveNewOrder(orderId: string, buyerId: string) {
     const orderToShipping = {
-      orderId: orderId,
+      orderID: orderId,
       buyerId: buyerId,
     };
-    fetch('https://localhost:8080', { method: 'POST' });
+    await fetch('http://localhost:8888/shipments',
+      {
+        method: 'POST',
+        body: JSON.stringify(orderToShipping),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },);
   }
 }
