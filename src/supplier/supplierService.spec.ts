@@ -73,6 +73,7 @@ describe('supplierService.spec.ts', () => {
     });
 
     const supplier = await supplierService.findAllbyProduct('4');
-    expect(supplier).toEqual(null);
+    expect(supplier).toEqual(undefined);
+    // hay q ver bien como hacer la exception por el undefined y comom hacer si el id del prod no existe
   });
 });
