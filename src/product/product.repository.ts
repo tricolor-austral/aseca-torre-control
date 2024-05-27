@@ -17,6 +17,13 @@ export class ProductRepository {
     });
   }
 
+    async findOne(id: string) {
+    return this.prismaService.product.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    }
   async substractStock(id: string, qty: number) {
     return this.prismaService.product.update({
       where: {

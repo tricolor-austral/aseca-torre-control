@@ -92,6 +92,21 @@ describe('orderService.spec.ts', () => {
 
 
 
+    it( '007_ getProductById', async () => {
+        const newProd = await productService.createProduct({
+            price: 100,
+            qty: 10,
+        });
+
+        const product = await productService.getProductById(newProd.id);
+        expect(product).toEqual(newProd);
+        expect(product.id).toEqual(newProd.id);
+        expect(product.price).toEqual(newProd.price);
+    });
+
+
+
+
 
 
 

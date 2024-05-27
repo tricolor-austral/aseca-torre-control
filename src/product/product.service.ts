@@ -14,6 +14,10 @@ export class ProductService {
   async getAllProducts() {
     return this.productRepository.findAll();
   }
+
+    async getProductById(id: string) {
+    return await this.productRepository.findOne(id);
+    }
   async checkIfThereIsStock(id: string, qty: number) {
     const stock = await this.productRepository.getStock(id);
     return stock > qty;

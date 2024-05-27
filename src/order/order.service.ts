@@ -43,13 +43,14 @@ export class OrderService {
     }
     //le mando al shipping que reciba la orden,
     //le mando al cross docking {orderDTO}
-
+    console.log("shipping");
     await ShippingService.recieveNewOrder(order.id, order.buyerId);
     const orderDTO = {
       orderId: order.id,
       buyerId: order.buyerId,
       productsId: order.products.map((product) => product.productIds),
     };
+    console.log("crosdocking");
     await this.crossDocking.sendOrderToCrossDocking(orderDTO);
     return order;
   }
