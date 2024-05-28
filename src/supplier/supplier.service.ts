@@ -12,10 +12,10 @@ export class SupplierService {
   }
 
   //falta manejar el error cuando el producto no tiene proveedores y cuando el producto no existe
-  findAllbyProduct(id: string) {
-    return this.supplierRepository.getSuppliersByProductId(id);
+  async findAllbyProduct(id: string) {
+    return await this.supplierRepository.getSuppliersByProductId(id);
   }
   async createSupplier(data: CreateSupplierDto) {
-    return this.supplierRepository.createSupplier(data);
+    return await this.supplierRepository.createSupplier(data);
   }
 }

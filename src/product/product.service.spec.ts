@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import {INestApplication, NotFoundException} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductService } from './product.service';
 import { ProductRepositoryMock } from './product.repositoryMock';
@@ -90,4 +90,29 @@ describe('productService.spec.ts', () => {
       `Insufficient stock for product ${newProd.id}. Requested: ${15}`,
     );
   });
+
+
+    it( '007_ getProductById', async () => {
+        const newProd = await productService.createProduct({
+            price: 100,
+            qty: 10,
+        });
+
+        const product = await productService.getProductById(newProd.id);
+        expect(product).toEqual(newProd);
+        expect(product.id).toEqual(newProd.id);
+        expect(product.price).toEqual(newProd.price);
+    });
+
+    it( '008_ getProductByIdNotFound', async () => {
+        const newProd = await productService.createProduct({
+            price: 100,
+            qty: 10,
+        });
+        await expect(productService.getProductById("fakeId")).rejects.toThrow(NotFoundException);
+    });
+
+
+
+
 });

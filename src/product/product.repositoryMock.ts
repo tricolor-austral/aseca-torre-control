@@ -17,6 +17,9 @@ export class ProductRepositoryMock extends ProductRepository {
     return Promise.resolve(newProductwithID);
   }
 
+    findOne(id: string): Promise<Product | null> {
+    return Promise.resolve(this.products.find((product) => product.id === id) || null);
+    }
   substractStock(id: string, qty: number) {
     const product = this.products.find((product) => product.id === id);
     if (product) {

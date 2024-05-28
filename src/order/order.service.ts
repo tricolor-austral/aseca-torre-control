@@ -41,7 +41,10 @@ export class OrderService {
     } else {
       throw new Error('No se pudo crear la orden');
     }
-    await this.shippingService.recieveNewOrder(order.id, order.buyerId);
+    //le mando al shipping que reciba la orden,
+    //le mando al cross docking {orderDTO}
+    console.log("shipping");
+  //await ShippingService.recieveNewOrder(order.id, order.buyerId);
     const orderDTO = {
       orderId: order.id,
       buyerId: order.buyerId,

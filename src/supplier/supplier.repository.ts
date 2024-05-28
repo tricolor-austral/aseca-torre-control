@@ -1,6 +1,7 @@
-import { PrismaService } from '../prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
-import { CreateSupplierDto } from './dto/create-supplier.dto';
+import {PrismaService} from '../prisma/prisma.service';
+import {Injectable} from '@nestjs/common';
+import {CreateSupplierDto} from './dto/create-supplier.dto';
+
 @Injectable()
 export class SupplierRepository {
   constructor(private prismaService: PrismaService) {}
@@ -23,7 +24,7 @@ export class SupplierRepository {
         },
       },
     });
-    return supplier.id;
+    return supplier.id
   }
   async createSupplier(data: CreateSupplierDto) {
     return this.prismaService.supplier.create({

@@ -1,93 +1,56 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function main() {
-  // Crear suppliers
-  const supplier1 = await prisma.supplier.create({
-    data: {
-      name: 'Supplier 1',
-    },
-  });
+  async function main() {
+    // Seed para Buyers
+    for (let i = 1; i <= 10; i++) {
+      await prisma.buyer.create({
+        data: {
+          id: `bugher_${i.toString()}`, // Convertir el índice a cadena
+          name: 'Nombre del Comprador',
+        },
+      });
+    }
 
-  const supplier2 = await prisma.supplier.create({
-    data: {
-      name: 'Supplier 2',
-    },
-  });
+    // Seed para Productos
+    const productos = [
+      {id: "11", price: 10.99, qty: 100},
+      {id: "p1", price: 20.99, qty: 10000},
+      {id: "p2", price: 5.99, qty: 100000},
+      {id: "4", price: 15.99, qty: 75},
+      {id: "5", price: 8.99, qty: 150},
+    ];
 
-  // Crear productos
-  const product1 = await prisma.product.create({
-    data: {
-      price: 10.0,
-      qty: 100,
-      supplier: { connect: { id: supplier1.id } },
-    },
-  });
 
-  const product2 = await prisma.product.create({
-    data: {
-      price: 20.0,
-      qty: 200,
-      supplier: { connect: { id: supplier1.id } },
-    },
-  });
+    for (const producto of productos) {
+      await prisma.product.create({
+        data: producto,
+      });
+    }
 
-  const product3 = await prisma.product.create({
-    data: {
-      price: 30.0,
-      qty: 300,
-      supplier: { connect: { id: supplier2.id } },
-    },
-  });
+    //seed para suppliers
+    for (let i = 1; i <= 10; i++) {
+      await prisma.supplier.create({
+        data: {
+          id: `subbblier_${i.toString()}`, // Convertir el índice a cadena
+          name: 'suplier name',
+          products: {
+            connect: [{
+              id: `p1`
+              // Convertir el índice a cadena
+            },
+              {
+                id: `p2`
+              }
+            ]
+          }
 
-  const product4 = await prisma.product.create({
-    data: {
-      price: 40.0,
-      qty: 400,
-      supplier: { connect: { id: supplier2.id } },
-    },
-  });
+        },
+      });
+    }
 
-  const product5 = await prisma.product.create({
-    data: {
-      price: 50.0,
-      qty: 500,
-      supplier: { connect: { id: supplier1.id } },
-    },
-  });
 
-  // Crear buyers
-  const buyer1 = await prisma.buyer.create({
-    data: {
-      name: 'Buyer 1',
-    },
-  });
-
-  const buyer2 = await prisma.buyer.create({
-    data: {
-      name: 'Buyer 2',
-    },
-  });
-
-  const buyer3 = await prisma.buyer.create({
-    data: {
-      name: 'Buyer 3',
-    },
-  });
-
-  console.log({
-    supplier1,
-    supplier2,
-    product1,
-    product2,
-    product3,
-    product4,
-    product5,
-    buyer1,
-    buyer2,
-    buyer3,
-  });
-}
+  }
 
 main()
   .catch((e) => {

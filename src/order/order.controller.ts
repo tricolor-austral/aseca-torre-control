@@ -13,6 +13,12 @@ export class OrderController {
 
   @Post()
   async createOrder(@Body() data: CreateOrderDto) {
-    return await this.orderService.createOrder(data);
+    try {
+      return await this.orderService.createOrder(data);
+    }
+    catch (error) {
+      console.log(error.message)
+      return error.message();
+    }
   }
 }
