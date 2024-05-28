@@ -12,7 +12,10 @@ describe('productService.spec.ts', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       providers: [
         PrismaService,
-        ProductService,
+        {
+          provide: ProductService,
+          useClass: ProductService,
+        },
         {
           provide: ProductRepository,
           useClass: ProductRepositoryMock,
@@ -20,8 +23,6 @@ describe('productService.spec.ts', () => {
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
     productService = moduleFixture.get<ProductService>(ProductService);
   });
 

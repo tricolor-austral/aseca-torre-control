@@ -11,6 +11,7 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
     private readonly crossDocking: CrossDockingService,
     private readonly productServices: ProductService,
+    private readonly shippingService: ShippingService,
   ) {}
 
   async createOrder(data: CreateOrderDto) {
@@ -30,7 +31,6 @@ export class OrderService {
       }
     }
     const order = await this.orderRepository.create(data);
-    //si la orden se creo bien resto el stock
     if (order) {
       for (const product of data.products) {
         await this.productServices.substractStock(
@@ -41,10 +41,7 @@ export class OrderService {
     } else {
       throw new Error('No se pudo crear la orden');
     }
-    //le mando al shipping que reciba la orden,
-    //le mando al cross docking {orderDTO}
-
-    await ShippingService.recieveNewOrder(order.id, order.buyerId);
+    await this.shippingService.recieveNewOrder(order.id, order.buyerId);
     const orderDTO = {
       orderId: order.id,
       buyerId: order.buyerId,
