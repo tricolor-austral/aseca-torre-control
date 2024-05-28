@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import { ProductRepository } from './product.repository';
 import { CreateProductDto } from './dto/CreateProductDto';
 
@@ -16,8 +16,14 @@ export class ProductService {
   }
 
     async getProductById(id: string) {
-    return await this.productRepository.findOne(id);
+    const product = await this.productRepository.findOne(id);
+    if (!product) {
+        throw new NotFoundException(`Product with ID ${id} not found`);
     }
+    return product;
+
+    }
+
   async checkIfThereIsStock(id: string, qty: number) {
     const stock = await this.productRepository.getStock(id);
     return stock > qty;

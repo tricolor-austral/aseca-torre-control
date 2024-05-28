@@ -5,14 +5,19 @@ import {crossDockingOrder} from "./dto/crossDockingOrder";
 import {ProductService} from "../product/product.service";
 import {CreateOrderDto, CreateSuborderDto, ProductAmountCreate} from "./dto/crossDockingDto";
 import axios from "axios";
+import {ShippingService} from "../shipping/shipping.service";
 
 @Injectable()
 export class CrossDockingService {
-  constructor(private supplierService: SupplierService,private productService : ProductService) {}
+  constructor(
+      private supplierService: SupplierService,
+      private productService : ProductService,
+      private shippingService: ShippingService,
+  ) {}
 
   async sendOrderToCrossDocking(orderDto: crossDockingOrder) {
       const json = await this.sendJson(orderDto);
-      const path = "https://03d7-2800-af0-1409-3117-c11d-3c1f-dca-2a9e.ngrok-free.app/order/create";
+      const path = "https://c0a8-200-80-234-200.ngrok-free.app/order/create";
       try {
           await axios.post(path, json);
 
@@ -22,6 +27,15 @@ export class CrossDockingService {
       catch (error) {
           console.error('Fetch failed:', error);
     }
+  }
+
+  async sendOrderToShipping() {
+      try {
+          await this.shippingService.sendOrder();
+      }
+      catch (error) {
+          return error.message();
+      }
   }
 
   private async sendJson(orderDto: crossDockingOrder) {

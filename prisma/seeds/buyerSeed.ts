@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
   async function main() {
     // Seed para Buyers
- /*   for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 10; i++) {
       await prisma.buyer.create({
         data: {
           id: `bugher_${i.toString()}`, // Convertir el índice a cadena
@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
         },
       });
     }
-*/
+
     // Seed para Productos
     const productos = [
       {id: "11", price: 10.99, qty: 100},

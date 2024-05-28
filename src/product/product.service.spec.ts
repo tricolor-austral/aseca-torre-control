@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import {INestApplication, NotFoundException} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductService } from './product.service';
 import { ProductRepositoryMock } from './product.repositoryMock';
@@ -104,9 +104,13 @@ describe('orderService.spec.ts', () => {
         expect(product.price).toEqual(newProd.price);
     });
 
-
-
-
+    it( '008_ getProductByIdNotFound', async () => {
+        const newProd = await productService.createProduct({
+            price: 100,
+            qty: 10,
+        });
+        await expect(productService.getProductById("fakeId")).rejects.toThrow(NotFoundException);
+    });
 
 
 

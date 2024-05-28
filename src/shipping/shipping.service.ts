@@ -9,4 +9,9 @@ export class ShippingService {
     };
     fetch('https://localhost:8080', { method: 'POST' });
   }
+
+  async sendOrder() {
+    const payload = null
+    fetch('https://54bd-186-0-228-202.ngrok-free.app/shipments', { method: 'POST', body: JSON.stringify(payload) });
+  }
 }

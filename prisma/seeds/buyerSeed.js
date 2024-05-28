@@ -40,21 +40,76 @@ var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var numberOfBuyers, buyers;
+        var i, productos, _i, productos_1, producto, i;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    numberOfBuyers = 5;
-                    buyers = Array.from({ length: numberOfBuyers }).map(function (_, index) { return ({
-                        name: "Buyer ".concat(index + 1),
-                    }); });
-                    return [4 /*yield*/, prisma.buyer.createMany({
-                            data: buyers,
-                        })];
+                    i = 1;
+                    _a.label = 1;
                 case 1:
+                    if (!(i <= 10)) return [3 /*break*/, 4];
+                    return [4 /*yield*/, prisma.buyer.create({
+                            data: {
+                                id: "bugher_".concat(i.toString()), // Convertir el índice a cadena
+                                name: 'Nombre del Comprador',
+                            },
+                        })];
+                case 2:
                     _a.sent();
-                    console.log("".concat(numberOfBuyers, " buyers have been created."));
-                    return [2 /*return*/];
+                    _a.label = 3;
+                case 3:
+                    i++;
+                    return [3 /*break*/, 1];
+                case 4:
+                    productos = [
+                        { id: "11", price: 10.99, qty: 100 },
+                        { id: "p1", price: 20.99, qty: 10000 },
+                        { id: "p2", price: 5.99, qty: 100000 },
+                        { id: "4", price: 15.99, qty: 75 },
+                        { id: "5", price: 8.99, qty: 150 },
+                    ];
+                    _i = 0, productos_1 = productos;
+                    _a.label = 5;
+                case 5:
+                    if (!(_i < productos_1.length)) return [3 /*break*/, 8];
+                    producto = productos_1[_i];
+                    return [4 /*yield*/, prisma.product.create({
+                            data: producto,
+                        })];
+                case 6:
+                    _a.sent();
+                    _a.label = 7;
+                case 7:
+                    _i++;
+                    return [3 /*break*/, 5];
+                case 8:
+                    i = 1;
+                    _a.label = 9;
+                case 9:
+                    if (!(i <= 10)) return [3 /*break*/, 12];
+                    return [4 /*yield*/, prisma.supplier.create({
+                            data: {
+                                id: "subbblier_".concat(i.toString()), // Convertir el índice a cadena
+                                name: 'suplier name',
+                                products: {
+                                    connect: [{
+                                            id: "p1"
+                                            // Convertir el índice a cadena
+                                        },
+                                        {
+                                            id: "p2"
+                                        }
+                                    ]
+                                }
+                            },
+                        })];
+                case 10:
+                    _a.sent();
+                    _a.label = 11;
+                case 11:
+                    i++;
+                    return [3 /*break*/, 9];
+                case 12: return [2 /*return*/];
             }
         });
     });
