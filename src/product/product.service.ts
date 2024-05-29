@@ -15,6 +15,10 @@ export class ProductService {
     return this.productRepository.findAll();
   }
 
+  async addStock(id: string, qty: number) {
+    return await this.productRepository.addStock(id, qty);
+  }
+
     async getProductById(id: string) {
     const product = await this.productRepository.findOne(id);
     if (!product) {

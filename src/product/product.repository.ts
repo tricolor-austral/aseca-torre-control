@@ -8,7 +8,21 @@ export class ProductRepository {
     return this.prismaService.product.findMany();
   }
 
+  async addStock(id: string, qty: number) {
+    return this.prismaService.product.update({
+      where: {
+        id: id,
+      },
+      data: {
+        qty: {
+          increment: qty,
+        },
+      },
+    });
+  }
+
   async createProduct(data: CreateProductDto) {
+    console.log(data.qty, data.price)
     return this.prismaService.product.create({
       data: {
         qty: data.qty,
