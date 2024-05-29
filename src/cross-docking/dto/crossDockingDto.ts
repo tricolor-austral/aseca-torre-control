@@ -4,9 +4,9 @@ import {Product} from "@prisma/client";
 export class ProductAmountCreate {
     public productId: string;
     public amount: number;
-    constructor(product : Product) {
-        this.productId = product.id;
-        this.amount = product.qty;
+    constructor(id : string, qty: number) {
+        this.productId = id;
+        this.amount = qty;
     }
 }
 

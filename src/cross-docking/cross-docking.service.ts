@@ -18,7 +18,8 @@ export class CrossDockingService {
 
   async sendOrderToCrossDocking(orderDto: crossDockingOrder) {
       const json = await this.sendJson(orderDto);
-      const path = "https://1df7-181-16-82-15.ngrok-free.app/order/create";
+      const path = "https://7bc1-181-16-82-15.ngrok-free.app" +
+          "/order/create";
       try {
           await axios.post(path, json);
 
@@ -41,26 +42,22 @@ export class CrossDockingService {
 
   private async sendJson(orderDto: crossDockingOrder) {
       //manejar error de supplier not found
-      const suppliers =  new Array(orderDto.productsId.length)
-      for(let i = 0; i < orderDto.productsId.length; i++) {
-            suppliers[i] = await this.supplierService.findAllbyProduct(orderDto.productsId[i]);
+      const suppliers =  new Array(orderDto.products.length)
+      for(let i = 0; i < orderDto.products.length; i++) {
+          const productId = orderDto.products[i].productIds;
+          suppliers[i] = await this.supplierService.findAllbyProduct(productId);
       }
-      const subOrders = await this.generateSubOrders(suppliers, orderDto.productsId);
+      const subOrders = await this.generateSubOrders(suppliers, orderDto.products);
       return new CreateOrderDto(orderDto.buyerId, subOrders);
 
 
   }
 
 
-  private async generateSubOrders(suppliers, productsId) {
-      const products = new Array(productsId.length);
-        for (let i = 0; i < productsId.length; i++) {
-            products[i] = await this.productService.getProductById(productsId[i]);
-        }
-
+  private async generateSubOrders(suppliers, products) {
       const subOrders = new Array(products.length);
       for (let i = 0; i < products.length; i++) {
-          const productAmountCreate = await new ProductAmountCreate(products[i]);
+          const productAmountCreate = new ProductAmountCreate(products[i].productIds, products[i].qty);
           subOrders[i] = (new CreateSuborderDto(suppliers[i], [productAmountCreate]));
       }
       return subOrders;

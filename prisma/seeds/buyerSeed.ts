@@ -2,52 +2,65 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
   async function main() {
-    // Seed para Buyers
-    for (let i = 1; i <= 10; i++) {
-      await prisma.buyer.create({
-        data: {
-          id: `bugher_${i.toString()}`, // Convertir el índice a cadena
-          name: 'Nombre del Comprador',
-        },
-      });
-    }
-
     // Seed para Productos
     const productos = [
-      {id: "11", price: 10.99, qty: 100},
-      {id: "p1", price: 20.99, qty: 10000},
-      {id: "p2", price: 5.99, qty: 100000},
-      {id: "4", price: 15.99, qty: 75},
-      {id: "5", price: 8.99, qty: 150},
+      {id: "computadora", price: 10.99, qty: 100},
+      {id: "lenvo2", price: 20.99, qty: 10000},
+      {id: "mac3", price: 5.99, qty: 100000},
+      {id: "mac3pro", price: 15.99, qty: 75},
+      {id: "thinkpad", price: 8.99, qty: 150},
     ];
 
 
     for (const producto of productos) {
-      await prisma.product.create({
-        data: producto,
+      await prisma.product.upsert({
+        where: {
+          id: producto.id },
+        update: {},
+        create: {
+            id: producto.id,
+            price: producto.price,
+            qty: producto.qty
+        }
       });
     }
 
     //seed para suppliers
-    for (let i = 1; i <= 10; i++) {
-      await prisma.supplier.create({
-        data: {
-          id: `subbblier_${i.toString()}`, // Convertir el índice a cadena
-          name: 'suplier name',
+    const suppliers = [
+        {id: "supplierA", name: "supplierA",
           products: {
-            connect: [{
-              id: `p1`
-              // Convertir el índice a cadena
-            },
-              {
-                id: `p2`
-              }
-            ]
-          }
+          connect: [{id: "computadora"},
+                    {id: "lenvo2"},
+          ]
+        }},
+      {id: "supplierB", name: "supplierB",
+        products: {
+          connect: [{id: "mac3"},
+            {id: "mac3pro"},
+          ]
+        }},
+      {id: "supplierC", name: "supplierC",
+        products: {
+          connect: [{id: "thinkpad"},
+          ]
+        }},
+    ]
 
+    for (const supplier of suppliers) {
+      await prisma.supplier.upsert({
+        where: {
+          id: supplier.id
         },
+        update: {},
+        create: {
+          id: supplier.id,
+          name: supplier.name,
+          products: supplier.products
+        }
       });
     }
+
+
 
 
   }

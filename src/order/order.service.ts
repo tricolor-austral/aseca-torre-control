@@ -46,7 +46,7 @@ export class OrderService {
     const orderDTO = {
       orderId: order.id,
       buyerId: order.buyerId,
-      productsId: order.products.map((product) => product.productIds),
+      products: order.products,
     };
     try {
       await this.crossDocking.sendOrderToCrossDocking(orderDTO);

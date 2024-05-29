@@ -6,5 +6,8 @@ export class crossDockingOrder {
     @IsString()
     buyerId: string;
     @IsArray()
-    productsId: Array<string>;
+    products:{
+        productIds: string;
+        qty: number;
+    }[];
 }
