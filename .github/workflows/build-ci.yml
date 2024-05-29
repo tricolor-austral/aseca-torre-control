@@ -3,7 +3,7 @@ name: Nest.js CI
 on:
   push:
     branches:
-      - main  # Cambia esto al nombre de tu rama principal si es diferente
+      - master
   pull_request:
 
 jobs:
