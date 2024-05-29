@@ -4,6 +4,7 @@ import { ProductService } from '../product/product.service';
 import { ShippingService } from '../shipping/shipping.service';
 import { CrossDockingService } from '../cross-docking/cross-docking.service';
 import { OrderRepository } from './order.repository';
+import { STATUS } from '@prisma/client';
 
 @Injectable()
 export class OrderService {
@@ -15,7 +16,7 @@ export class OrderService {
   ) {}
 
   async createOrder(data: CreateOrderDto) {
-    console.log(data.buyerId)
+    console.log(data.buyerId);
     if (!data.products.length) {
       throw new Error('No hay productos en la orden');
     }
@@ -58,5 +59,9 @@ export class OrderService {
 
   async getOrders() {
     return await this.orderRepository.findAll();
+  }
+
+  async changeStatus(id: string, status: STATUS) {
+    return await this.orderRepository.changeStatus(id, status);
   }
 }

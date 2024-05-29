@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderOutput } from './dto/OrderOutput';
+import { STATUS } from '@prisma/client';
 
 @Injectable()
 export class OrderRepository {
@@ -13,7 +14,7 @@ export class OrderRepository {
       update: {}, // Assuming no fields to update, otherwise specify the fields to update here.
       create: {
         id: data.buyerId,
-        name: "pepe", // Replace with data from CreateOrderDto if needed.
+        name: 'pepe', // Replace with data from CreateOrderDto if needed.
       },
     });
 
@@ -29,6 +30,7 @@ export class OrderRepository {
             })),
           },
         },
+        status: STATUS.CROSSDOCKING,
       },
       include: {
         products: true,
@@ -40,6 +42,7 @@ export class OrderRepository {
       id: order.id,
       buyerId: order.buyerId,
       products: data.products,
+      status: order.status,
     } as OrderOutput;
 
     return orderOutput; // Return the created order along with the associated products.
@@ -61,7 +64,13 @@ export class OrderRepository {
       data,
     });
   }
-  async clear() {
-    await this.prisma.order.deleteMany();
+  async changeStatus(id: string, status: STATUS) {
+    console.log('Changing status of order with id:', id, 'to:', status);
+    return this.prisma.order.update({
+      where: { id: id },
+      data: {
+        status: status,
+      },
+    });
   }
 }

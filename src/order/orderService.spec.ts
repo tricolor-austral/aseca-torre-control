@@ -13,7 +13,6 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { ProductRepository } from '../product/product.repository';
 import { SupplierRepositoryMock } from '../supplier/supplier.repositoryMock';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
-import { ShipementRepository } from '../shipping/shipement.repository';
 
 describe('OrderService', () => {
   let orderService: OrderService;
@@ -45,7 +44,6 @@ describe('OrderService', () => {
         SupplierService,
         ProductService,
         ShippingService,
-        ShipementRepository,
       ],
     }).compile();
 
@@ -265,7 +263,51 @@ describe('OrderService', () => {
       orderDto.products[3].productIds,
     );
   });
+  it('create an  order with status CROSSDOCKING', async () => {
+    const prod = await createRandomProduct();
+    const sup = await createRandomSupplier([prod.id]);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
 
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    expect(createdOrder).toBeDefined();
+    expect(createdOrder.buyerId).toEqual(orderDto.buyerId);
+    expect(createdOrder.products[0].productIds).toEqual(
+      orderDto.products[0].productIds,
+    );
+    expect(createdOrder.status).toEqual('CROSSDOCKING');
+  });
+  it('change status from order to PROGRESS', async () => {
+    const prod = await createRandomProduct();
+    const sup = await createRandomSupplier([prod.id]);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    const updatedOrder = await orderService.changeStatus(
+      createdOrder.id,
+      'PROGRESS',
+    );
+
+    expect(updatedOrder).toBeDefined();
+    expect(updatedOrder.status).toEqual('PROGRESS');
+  });
   async function createRandomProduct() {
     return await productService.createProduct({
       qty: 10,

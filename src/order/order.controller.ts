@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { ChangeStatusDto } from '../shipping/dtos/ChangeStatusDto';
 
 @Controller('order')
 export class OrderController {
@@ -15,10 +16,13 @@ export class OrderController {
   async createOrder(@Body() data: CreateOrderDto) {
     try {
       return await this.orderService.createOrder(data);
-    }
-    catch (error) {
-      console.log(error.message)
+    } catch (error) {
+      console.log(error.message);
       return error.message();
     }
+  }
+  @Put()
+  async changeStatus(@Body() data: ChangeStatusDto) {
+    return this.orderService.changeStatus(data.id, data.status);
   }
 }

@@ -47,14 +47,11 @@ model Order {
   buyerId  String
   Buyer    Buyer     @relation(fields: [buyerId], references: [id])
   products OrderProduct[]
+  status STATUS
 }
 
-model Shipements {
-  id String @id @default(uuid())
-  orderId String
-  status STATUS @default(NEW)
-}
 enum STATUS {
+  CROSSDOCKING
   NEW
   PROGRESS
   DELIVERED

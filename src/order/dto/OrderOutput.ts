@@ -1,3 +1,5 @@
+import { STATUS } from '@prisma/client';
+
 export class OrderOutput {
   id: string;
   buyerId: string;
@@ -5,4 +7,5 @@ export class OrderOutput {
     productIds: string;
     qty: number;
   }[];
+  status: STATUS;
 }
