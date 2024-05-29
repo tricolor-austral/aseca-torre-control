@@ -7,14 +7,20 @@ import { OrderOutput } from './dto/OrderOutput';
 export class OrderRepository {
   constructor(private readonly prisma: PrismaService) {}
   async create(data: CreateOrderDto): Promise<OrderOutput> {
+    // Step 1: Upsert the buyer
+    const buyer = await this.prisma.buyer.upsert({
+      where: { id: data.buyerId },
+      update: {}, // Assuming no fields to update, otherwise specify the fields to update here.
+      create: {
+        id: data.buyerId,
+        name: "pepe", // Replace with data from CreateOrderDto if needed.
+      },
+    });
+
+    // Step 2: Create the order
     const order = await this.prisma.order.create({
       data: {
-        Buyer: {
-          create: {
-            id: data.buyerId,
-            name: "pepe",
-          },
-        },
+        buyerId: buyer.id, // Reference the existing or newly created buyer.
         products: {
           createMany: {
             data: data.products.map((product) => ({
@@ -28,13 +34,15 @@ export class OrderRepository {
         products: true,
       },
     });
+
+    // Step 3: Prepare the output
     const orderOutput = {
       id: order.id,
       buyerId: order.buyerId,
       products: data.products,
     } as OrderOutput;
 
-    return orderOutput; // Se devuelve la orden creada junto con los productos asociados.
+    return orderOutput; // Return the created order along with the associated products.
   }
 
   async findAll() {

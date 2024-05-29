@@ -24,10 +24,12 @@ export class CreateSuborderDto {
 
 export class CreateOrderDto {
     clientId: string;
+    id: string;
     subOrders: CreateSuborderDto[];
 
-    constructor(clientId: string, subOrders: CreateSuborderDto[]) {
+    constructor(clientId: string, orderId: string, subOrders: CreateSuborderDto[]) {
         this.clientId = clientId;
+        this.id = orderId;
         this.subOrders = subOrders;
     }
 }
