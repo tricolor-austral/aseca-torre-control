@@ -49,8 +49,16 @@ model Order {
   products OrderProduct[]
 }
 
-
-
+model Shipements {
+  id String @id @default(uuid())
+  orderId String
+  status STATUS @default(NEW)
+}
+enum STATUS {
+  NEW
+  PROGRESS
+  DELIVERED
+}
 
 
 

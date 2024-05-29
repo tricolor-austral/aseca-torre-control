@@ -6,7 +6,6 @@ import { ProductRepository } from './product.repository';
 import { PrismaService } from '../prisma/prisma.service';
 describe('productService.spec.ts', () => {
   let productService: ProductService;
-
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       providers: [

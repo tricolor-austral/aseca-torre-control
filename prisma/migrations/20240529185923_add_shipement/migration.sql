@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "STATUS" AS ENUM ('NEW', 'PROGRESS', 'DELIVERED');
+
 -- CreateTable
 CREATE TABLE "Buyer" (
     "id" TEXT NOT NULL,
@@ -39,6 +42,15 @@ CREATE TABLE "Order" (
     "buyerId" TEXT NOT NULL,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Shipements" (
+    "id" TEXT NOT NULL,
+    "orderId" TEXT NOT NULL,
+    "status" "STATUS" NOT NULL DEFAULT 'NEW',
+
+    CONSTRAINT "Shipements_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
