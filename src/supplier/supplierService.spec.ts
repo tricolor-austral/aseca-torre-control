@@ -1,12 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
 import { SupplierService } from './supplier.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupplierRepositoryMock } from './supplier.repositoryMock';
 import { SupplierRepository } from './supplier.repository';
 
 describe('supplierService.spec.ts', () => {
-  let app: INestApplication;
   let supplierService: SupplierService;
 
   beforeEach(async () => {

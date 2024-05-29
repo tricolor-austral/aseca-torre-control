@@ -13,6 +13,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { ProductRepository } from '../product/product.repository';
 import { SupplierRepositoryMock } from '../supplier/supplier.repositoryMock';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { ShipementRepository } from '../shipping/shipement.repository';
 
 describe('OrderService', () => {
   let orderService: OrderService;
@@ -43,6 +44,8 @@ describe('OrderService', () => {
         ShippingService,
         SupplierService,
         ProductService,
+        ShippingService,
+        ShipementRepository,
       ],
     }).compile();
 
