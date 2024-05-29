@@ -11,12 +11,13 @@ import {
 import axios from 'axios';
 import { ShippingService } from '../shipping/shipping.service';
 import { CreateShipementDto } from '../shipping/dtos/CreateShipementDto';
+import { OrderService } from '../order/order.service';
 
 @Injectable()
 export class CrossDockingService {
   constructor(
     private supplierService: SupplierService,
-    private productService: ProductService,
+    private orderService: OrderService,
     private shippingService: ShippingService,
   ) {}
 
@@ -32,6 +33,7 @@ export class CrossDockingService {
   }
 
   async sendOrderToShipping(shippingDto: CreateShipementDto) {
+    await this.orderService.changeStatus(shippingDto.orderID, 'NEW');
     try {
       await this.shippingService.sendOrder(shippingDto);
     } catch (error) {
