@@ -41,16 +41,17 @@ export class OrderService {
     } else {
       throw new Error('No se pudo crear la orden');
     }
-    //le mando al shipping que reciba la orden,
-    //le mando al cross docking {orderDTO}
-    console.log("shipping");
-  //await ShippingService.recieveNewOrder(order.id, order.buyerId);
+
     const orderDTO = {
       orderId: order.id,
       buyerId: order.buyerId,
       productsId: order.products.map((product) => product.productIds),
     };
-    await this.crossDocking.sendOrderToCrossDocking(orderDTO);
+    try {
+      await this.crossDocking.sendOrderToCrossDocking(orderDTO);
+    } catch (e) {
+      console.log('Error in crossDocking service');
+    }
     return order;
   }
 

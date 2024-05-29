@@ -12,13 +12,12 @@ describe('supplierService.spec.ts', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       providers: [
-          PrismaService,
-          SupplierService,
-          {
-              provide: SupplierRepository,
-              useClass: SupplierRepositoryMock,
-          },
-
+        PrismaService,
+        SupplierService,
+        {
+          provide: SupplierRepository,
+          useClass: SupplierRepositoryMock,
+        },
       ],
     }).compile();
 
@@ -27,8 +26,6 @@ describe('supplierService.spec.ts', () => {
 
     supplierService = moduleFixture.get<SupplierService>(SupplierService);
   });
-
-
 
   it('001_createSupplier', async () => {
     const newSuplier = await supplierService.createSupplier({

@@ -214,6 +214,54 @@ describe('OrderService', () => {
       orderDto.products[1].productIds,
     );
   });
+  //Test de crear muna orden con muchos productos y distintps suppliers
+  it('test 008 should create an order with many products from different suppliers', async () => {
+    const prod1 = await createRandomProduct();
+    const prod2 = await createRandomProduct();
+    const prod3 = await createRandomProduct();
+    const prod4 = await createRandomProduct();
+    const sup1 = await createRandomSupplier([prod1.id, prod2.id]);
+    const sup2 = await createRandomSupplier([prod3.id, prod4.id]);
+
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod1.id,
+          qty: 1,
+        },
+        {
+          productIds: prod2.id,
+          qty: 1,
+        },
+        {
+          productIds: prod3.id,
+          qty: 1,
+        },
+        {
+          productIds: prod4.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    expect(createdOrder).toBeDefined();
+    expect(createdOrder.buyerId).toEqual(orderDto.buyerId);
+    expect(createdOrder.products[0].productIds).toEqual(
+      orderDto.products[0].productIds,
+    );
+    expect(createdOrder.products[1].productIds).toEqual(
+      orderDto.products[1].productIds,
+    );
+    expect(createdOrder.products[2].productIds).toEqual(
+      orderDto.products[2].productIds,
+    );
+    expect(createdOrder.products[3].productIds).toEqual(
+      orderDto.products[3].productIds,
+    );
+  });
 
   async function createRandomProduct() {
     return await productService.createProduct({

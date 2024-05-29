@@ -1,6 +1,6 @@
-import {PrismaService} from '../prisma/prisma.service';
-import {Injectable} from '@nestjs/common';
-import {CreateSupplierDto} from './dto/create-supplier.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { CreateSupplierDto } from './dto/create-supplier.dto';
 
 @Injectable()
 export class SupplierRepository {
@@ -24,7 +24,7 @@ export class SupplierRepository {
         },
       },
     });
-    return supplier.id
+    return supplier.id;
   }
   async createSupplier(data: CreateSupplierDto) {
     return this.prismaService.supplier.create({
@@ -35,8 +35,5 @@ export class SupplierRepository {
         },
       },
     });
-  }
-  async clear() {
-    this.prismaService.supplier.deleteMany();
   }
 }

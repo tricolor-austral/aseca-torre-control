@@ -5,7 +5,7 @@ import { SupplierRepository } from '../supplier/supplier.repository';
 import { PrismaService } from '../prisma/prisma.service';
 
 describe('CrossDockingService', () => {
-  let service: CrossDockingService;
+  let crossDockingService: CrossDockingService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,10 +17,10 @@ describe('CrossDockingService', () => {
       ],
     }).compile();
 
-    service = module.get<CrossDockingService>(CrossDockingService);
+    crossDockingService = module.get<CrossDockingService>(CrossDockingService);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(crossDockingService).toBeDefined();
   });
 });
