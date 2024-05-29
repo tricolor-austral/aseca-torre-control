@@ -1,11 +1,10 @@
-import {INestApplication, NotFoundException} from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductService } from './product.service';
 import { ProductRepositoryMock } from './product.repositoryMock';
 import { ProductRepository } from './product.repository';
 import { PrismaService } from '../prisma/prisma.service';
 describe('productService.spec.ts', () => {
-  let app: INestApplication;
   let productService: ProductService;
 
   beforeEach(async () => {
@@ -24,10 +23,6 @@ describe('productService.spec.ts', () => {
     }).compile();
 
     productService = moduleFixture.get<ProductService>(ProductService);
-  });
-
-  afterAll(async () => {
-    await app.close();
   });
 
   it('001_creatingAproduct', async () => {
@@ -91,28 +86,25 @@ describe('productService.spec.ts', () => {
     );
   });
 
-
-    it( '007_ getProductById', async () => {
-        const newProd = await productService.createProduct({
-            price: 100,
-            qty: 10,
-        });
-
-        const product = await productService.getProductById(newProd.id);
-        expect(product).toEqual(newProd);
-        expect(product.id).toEqual(newProd.id);
-        expect(product.price).toEqual(newProd.price);
+  it('007_ getProductById', async () => {
+    const newProd = await productService.createProduct({
+      price: 100,
+      qty: 10,
     });
 
-    it( '008_ getProductByIdNotFound', async () => {
-        const newProd = await productService.createProduct({
-            price: 100,
-            qty: 10,
-        });
-        await expect(productService.getProductById("fakeId")).rejects.toThrow(NotFoundException);
+    const product = await productService.getProductById(newProd.id);
+    expect(product).toEqual(newProd);
+    expect(product.id).toEqual(newProd.id);
+    expect(product.price).toEqual(newProd.price);
+  });
+
+  it('008_ getProductByIdNotFound', async () => {
+    const newProd = await productService.createProduct({
+      price: 100,
+      qty: 10,
     });
-
-
-
-
+    await expect(productService.getProductById('fakeId')).rejects.toThrow(
+      NotFoundException,
+    );
+  });
 });

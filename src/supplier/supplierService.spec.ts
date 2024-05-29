@@ -20,10 +20,6 @@ describe('supplierService.spec.ts', () => {
         },
       ],
     }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
-
     supplierService = moduleFixture.get<SupplierService>(SupplierService);
   });
 
