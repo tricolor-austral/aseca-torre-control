@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
     container_name: control-tower-app
     ports:
-      - '8080:8080'
+      - '3000:8080'
     depends_on:
       - db
 volumes:

@@ -15,6 +15,7 @@ export class OrderService {
   ) {}
 
   async createOrder(data: CreateOrderDto) {
+    console.log(data.buyerId)
     if (!data.products.length) {
       throw new Error('No hay productos en la orden');
     }

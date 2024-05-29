@@ -6,6 +6,7 @@ import {ProductService} from "../product/product.service";
 import {CreateOrderDto, CreateSuborderDto, ProductAmountCreate} from "./dto/crossDockingDto";
 import axios from "axios";
 import {ShippingService} from "../shipping/shipping.service";
+import {ShippingDto} from "../shipping/shippingDto";
 
 @Injectable()
 export class CrossDockingService {
@@ -17,7 +18,7 @@ export class CrossDockingService {
 
   async sendOrderToCrossDocking(orderDto: crossDockingOrder) {
       const json = await this.sendJson(orderDto);
-      const path = "https://c0a8-200-80-234-200.ngrok-free.app/order/create";
+      const path = "https://1df7-181-16-82-15.ngrok-free.app/order/create";
       try {
           await axios.post(path, json);
 
@@ -29,9 +30,9 @@ export class CrossDockingService {
     }
   }
 
-  async sendOrderToShipping() {
+  async sendOrderToShipping(shippingDto : ShippingDto) {
       try {
-          await this.shippingService.sendOrder();
+          await this.shippingService.sendOrder(shippingDto);
       }
       catch (error) {
           return error.message();

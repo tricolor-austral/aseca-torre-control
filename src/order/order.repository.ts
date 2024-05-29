@@ -7,11 +7,14 @@ import { OrderOutput } from './dto/OrderOutput';
 export class OrderRepository {
   constructor(private readonly prisma: PrismaService) {}
   async create(data: CreateOrderDto): Promise<OrderOutput> {
-    console.log('repositorio');
-
     const order = await this.prisma.order.create({
       data: {
-        buyerId: data.buyerId,
+        Buyer: {
+          create: {
+            id: data.buyerId,
+            name: "pepe",
+          },
+        },
         products: {
           createMany: {
             data: data.products.map((product) => ({
