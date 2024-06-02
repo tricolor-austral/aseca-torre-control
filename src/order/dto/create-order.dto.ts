@@ -8,6 +8,7 @@ export class CreateOrderDto {
   @IsNotEmpty()
   products: {
     productIds: string;
+    name: string;
     qty: number;
   }[];
 }

@@ -4,6 +4,7 @@ import { ProductService } from '../product/product.service';
 import { CrossDockingService } from '../cross-docking/cross-docking.service';
 import { OrderRepository } from './order.repository';
 import { STATUS } from '@prisma/client';
+import { OrderOutput } from './dto/OrderOutput';
 
 @Injectable()
 export class OrderService {
@@ -31,6 +32,19 @@ export class OrderService {
       }
     }
     const order = await this.orderRepository.create(data);
+    // Step 3: Prepare the output
+    const orderOutput = {
+      id: order.id,
+      buyerId: order.buyerId,
+      products: [
+        ...data.products.map((product) => ({
+          productIds: product.productIds,
+          name: product.name,
+          qty: product.qty,
+        })),
+      ],
+      status: order.status,
+    } as OrderOutput;
     if (order) {
       for (const product of data.products) {
         await this.productServices.substractStock(
@@ -43,16 +57,16 @@ export class OrderService {
     }
 
     const orderDTO = {
-      orderId: order.id,
-      buyerId: order.buyerId,
-      products: order.products,
+      orderId: orderOutput.id,
+      buyerId: orderOutput.buyerId,
+      products: orderOutput.products,
     };
     try {
       await this.crossDocking.sendOrderToCrossDocking(orderDTO);
     } catch (e) {
       console.log('Error in crossDocking service');
     }
-    return order;
+    return orderOutput;
   }
 
   async getOrders() {

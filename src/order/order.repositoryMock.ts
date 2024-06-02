@@ -40,6 +40,7 @@ export class OrderRepositoryMock extends OrderRepository {
       buyerId: newOrderWithId.buyerId,
       products: newOrder.products.map((product) => ({
         productIds: product.productIds,
+        name: product.name,
         qty: product.qty,
       })),
       status: newOrderWithId.status,
@@ -48,9 +49,9 @@ export class OrderRepositoryMock extends OrderRepository {
     return Promise.resolve(orderOutput);
   }
 
-  findAll(): Promise<Awaited<Order[]>> {
-    return Promise.resolve(this.orders);
-  }
+  // findAll() {
+  //   return Promise.resolve(this.orders);
+  // }
   async changeStatus(id: string, status: STATUS) {
     const order = this.orders.find((order) => order.id === id);
     if (!order) {

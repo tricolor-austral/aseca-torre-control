@@ -7,4 +7,6 @@ export class CreateProductDto {
   qty: number;
   @IsNotEmpty()
   price: number;
+  @IsNotEmpty()
+  supplierName: string;
 }

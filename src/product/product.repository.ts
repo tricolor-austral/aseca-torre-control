@@ -1,6 +1,7 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/CreateProductDto';
+
 @Injectable()
 export class ProductRepository {
   constructor(private prismaService: PrismaService) {}
@@ -20,14 +21,27 @@ export class ProductRepository {
       },
     });
   }
-
   async createProduct(data: CreateProductDto) {
     console.log(data.qty, data.price);
+
+    const supplier = await this.prismaService.supplier.findFirst({
+      where: {
+        name: data.supplierName,
+      },
+    });
+
+    if (!supplier) {
+      throw new Error(`Supplier with name ${data.supplierName} not found`);
+    }
+
     return this.prismaService.product.create({
       data: {
         name: data.name,
         qty: data.qty,
         price: data.price,
+        supplier: {
+          connect: { id: supplier.id },
+        },
       },
     });
   }

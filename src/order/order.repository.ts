@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderOutput } from './dto/OrderOutput';
-import { STATUS } from '@prisma/client';
+import { Order, STATUS } from '@prisma/client';
 
 @Injectable()
 export class OrderRepository {
   constructor(private readonly prisma: PrismaService) {}
-  async create(data: CreateOrderDto): Promise<OrderOutput> {
+  async create(data: CreateOrderDto): Promise<Order> {
     // Step 1: Upsert the buyer
     const buyer = await this.prisma.buyer.upsert({
       where: { id: data.buyerId },
@@ -37,19 +37,29 @@ export class OrderRepository {
       },
     });
 
-    // Step 3: Prepare the output
-    const orderOutput = {
-      id: order.id,
-      buyerId: order.buyerId,
-      products: data.products,
-      status: order.status,
-    } as OrderOutput;
-
-    return orderOutput; // Return the created order along with the associated products.
+    return order; // Return the created order along with the associated products.
   }
 
   async findAll() {
-    return this.prisma.order.findMany();
+    const orders = await this.prisma.order.findMany({
+      include: {
+        products: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    return orders.map((order) => ({
+      orderId: order.id,
+      status: order.status,
+      products: order.products.map((op) => ({
+        productIds: op.product.id,
+        name: op.product.name,
+        qtyBought: op.qtyBought,
+      })),
+    }));
   }
 
   async findById(id: string) {

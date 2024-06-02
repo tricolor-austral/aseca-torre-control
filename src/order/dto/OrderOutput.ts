@@ -5,6 +5,7 @@ export class OrderOutput {
   buyerId: string;
   products: {
     productIds: string;
+    name: string;
     qty: number;
   }[];
   status: STATUS;

@@ -311,6 +311,7 @@ describe('OrderService', () => {
   async function createRandomProduct() {
     return await productService.createProduct({
       qty: 10,
+      name: 'computadora',
       price: 100,
     });
   }
