@@ -24,14 +24,21 @@ export class ProductRepository {
   async createProduct(data: CreateProductDto) {
     console.log(data.qty, data.price);
 
-    const supplier = await this.prismaService.supplier.findFirst({
+    // Dividir el string de suppliers por comas y eliminar espacios en blanco adicionales
+    const supplierNames = data.supplierName
+      .split(',')
+      .map((name) => name.trim());
+
+    const suppliers = await this.prismaService.supplier.findMany({
       where: {
-        name: data.supplierName,
+        name: {
+          in: supplierNames,
+        },
       },
     });
 
-    if (!supplier) {
-      throw new Error(`Supplier with name ${data.supplierName} not found`);
+    if (suppliers.length !== supplierNames.length) {
+      throw new Error(`One or more suppliers not found`);
     }
 
     return this.prismaService.product.create({
@@ -40,7 +47,7 @@ export class ProductRepository {
         qty: data.qty,
         price: data.price,
         supplier: {
-          connect: { id: supplier.id },
+          connect: suppliers.map((supplier) => ({ id: supplier.id })),
         },
       },
     });
