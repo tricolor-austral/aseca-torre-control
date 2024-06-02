@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ProductService } from '../product/product.service';
-import { ShippingService } from '../shipping/shipping.service';
 import { CrossDockingService } from '../cross-docking/cross-docking.service';
 import { OrderRepository } from './order.repository';
 import { STATUS } from '@prisma/client';
@@ -12,7 +11,6 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
     private readonly crossDocking: CrossDockingService,
     private readonly productServices: ProductService,
-    private readonly shippingService: ShippingService,
   ) {}
 
   async createOrder(data: CreateOrderDto) {

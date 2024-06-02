@@ -29,6 +29,7 @@ model Product {
   id       String   @id @default(uuid())
   price    Float
   qty      Int
+  name    String
   supplier Supplier[] @relation("ProductSupplier")
   orders   OrderProduct[]
 }

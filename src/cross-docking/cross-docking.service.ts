@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { SupplierService } from '../supplier/supplier.service';
 import { crossDockingOrder } from './dto/crossDockingOrder';
-import { ProductService } from '../product/product.service';
 import {
   CreateOrderDto,
   CreateSuborderDto,
@@ -11,13 +10,12 @@ import {
 import axios from 'axios';
 import { ShippingService } from '../shipping/shipping.service';
 import { CreateShipementDto } from '../shipping/dtos/CreateShipementDto';
-import { OrderService } from '../order/order.service';
+import { STATUS } from '@prisma/client';
 
 @Injectable()
 export class CrossDockingService {
   constructor(
     private supplierService: SupplierService,
-    private orderService: OrderService,
     private shippingService: ShippingService,
   ) {}
 
@@ -33,7 +31,6 @@ export class CrossDockingService {
   }
 
   async sendOrderToShipping(shippingDto: CreateShipementDto) {
-    await this.orderService.changeStatus(shippingDto.orderID, 'NEW');
     try {
       await this.shippingService.sendOrder(shippingDto);
     } catch (error) {
@@ -42,7 +39,6 @@ export class CrossDockingService {
   }
 
   private async sendJson(orderDto: crossDockingOrder) {
-    //manejar error de supplier not found
     const suppliers = new Array(orderDto.products.length);
     for (let i = 0; i < orderDto.products.length; i++) {
       const productId = orderDto.products[i].productIds;

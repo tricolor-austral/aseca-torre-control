@@ -5,7 +5,6 @@ import { OrderService } from './order.service';
 import { OrderRepository } from './order.repository';
 import { ProductModule } from '../product/product.module';
 import { CrossDockingModule } from '../cross-docking/cross-docking.module';
-import { ShippingModule } from '../shipping/shipping.module';
 import { OrderRepositoryMock } from './order.repositoryMock';
 import { SupplierModule } from '../supplier/supplier.module';
 
@@ -17,7 +16,7 @@ import { SupplierModule } from '../supplier/supplier.module';
     PrismaService,
     OrderRepositoryMock,
   ],
-  exports: [OrderRepository],
-  imports: [ProductModule, CrossDockingModule, ShippingModule, SupplierModule],
+  exports: [OrderRepository, OrderService],
+  imports: [ProductModule, CrossDockingModule, SupplierModule],
 })
 export class OrderModule {}

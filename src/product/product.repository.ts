@@ -22,22 +22,23 @@ export class ProductRepository {
   }
 
   async createProduct(data: CreateProductDto) {
-    console.log(data.qty, data.price)
+    console.log(data.qty, data.price);
     return this.prismaService.product.create({
       data: {
+        name: data.name,
         qty: data.qty,
         price: data.price,
       },
     });
   }
 
-    async findOne(id: string) {
+  async findOne(id: string) {
     return this.prismaService.product.findFirst({
       where: {
         id: id,
       },
     });
-    }
+  }
   async substractStock(id: string, qty: number) {
     return this.prismaService.product.update({
       where: {
