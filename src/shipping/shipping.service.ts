@@ -12,7 +12,7 @@ export class ShippingService {
   async sendOrder(shippingDto: CreateShipementDto) {
     await this.orderService.changeStatus(shippingDto.orderID, STATUS.NEW);
     console.log(JSON.stringify(shippingDto));
-    fetch('https://37ea-200-85-126-66.ngrok-free.app/shipments', {
+    fetch('https://c5ab-24-232-109-150.ngrok-free.app/shipments', {
       method: 'POST',
       body: JSON.stringify(shippingDto),
       headers: { 'Content-Type': 'application/json' },

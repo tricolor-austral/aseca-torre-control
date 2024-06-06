@@ -302,7 +302,7 @@ describe('OrderService', () => {
 
     const updatedOrder = await orderService.changeStatus(
       createdOrder.id,
-      'PROGRESS',
+      'NEW',
     );
 
     expect(updatedOrder).toBeDefined();
@@ -313,6 +313,7 @@ describe('OrderService', () => {
       qty: 10,
       name: 'computadora',
       price: 100,
+      supplierName : "SupplierA"
     });
   }
   async function createRandomSupplier(productsIds: string[] = []) {

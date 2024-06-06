@@ -21,7 +21,7 @@ export class CrossDockingService {
 
   async sendOrderToCrossDocking(orderDto: crossDockingOrder) {
     const json = await this.sendJson(orderDto);
-    const path = 'https://fbd4-181-16-82-15.ngrok-free.app' + '/order/create';
+    const path = 'https://d19c-181-16-82-15.ngrok-free.app' + '/order/create';
     try {
       await axios.post(path, json);
     } catch (error) {
@@ -31,6 +31,7 @@ export class CrossDockingService {
   }
 
   async sendOrderToShipping(shippingDto: CreateShipementDto) {
+    console.log(shippingDto);
     try {
       await this.shippingService.sendOrder(shippingDto);
     } catch (error) {
