@@ -23,11 +23,10 @@ describe('productService.spec.ts', () => {
 
     productService = moduleFixture.get<ProductService>(ProductService);
   });
-
   it('001_creatingAproduct', async () => {
     const newProd = await productService.createProduct({
-      name: "mac",
-      supplierName: "apple",
+      name: 'mac',
+      supplierName: 'apple',
       price: 100,
       qty: 1,
     });
@@ -38,8 +37,8 @@ describe('productService.spec.ts', () => {
 
   it('002_creatingAproductWithMoreThan1qty', async () => {
     const newProd = await productService.createProduct({
-      name: "mac",
-      supplierName: "apple",
+      name: 'mac',
+      supplierName: 'apple',
       price: 100,
       qty: 5,
     });
@@ -50,8 +49,8 @@ describe('productService.spec.ts', () => {
 
   it('003_checkIfThereIsStock', async () => {
     const newProd = await productService.createProduct({
-      name: "mac",
-      supplierName: "apple",
+      name: 'mac',
+      supplierName: 'apple',
       price: 100,
       qty: 10,
     });
@@ -62,8 +61,8 @@ describe('productService.spec.ts', () => {
 
   it('004_checkIfThereIsStockWithMoreThanAvailable', async () => {
     const newProd = await productService.createProduct({
-      name: "mac",
-      supplierName: "apple",
+      name: 'mac',
+      supplierName: 'apple',
       price: 100,
       qty: 10,
     });
@@ -74,8 +73,8 @@ describe('productService.spec.ts', () => {
 
   it('005_substractingStock', async () => {
     const newProd = await productService.createProduct({
-      name: "mac",
-      supplierName: "apple",
+      name: 'mac',
+      supplierName: 'apple',
       price: 100,
       qty: 10,
     });
@@ -86,8 +85,8 @@ describe('productService.spec.ts', () => {
 
   it('006_substractingStockWithMoreThanAvailable', async () => {
     const newProd = await productService.createProduct({
-      name: "mac",
-      supplierName: "apple",
+      name: 'mac',
+      supplierName: 'apple',
       price: 100,
       qty: 10,
     });
@@ -99,8 +98,8 @@ describe('productService.spec.ts', () => {
 
   it('007_ getProductById', async () => {
     const newProd = await productService.createProduct({
-      name: "mac",
-      supplierName: "apple",
+      name: 'mac',
+      supplierName: 'apple',
       price: 100,
       qty: 10,
     });
@@ -113,13 +112,33 @@ describe('productService.spec.ts', () => {
 
   it('008_ getProductByIdNotFound', async () => {
     const newProd = await productService.createProduct({
-      name: "mac",
-      supplierName: "apple",
+      name: 'mac',
+      supplierName: 'apple',
       price: 100,
       qty: 10,
     });
     await expect(productService.getProductById('fakeId')).rejects.toThrow(
       NotFoundException,
     );
+  });
+  it('009_createProductWithSupplierEmpty', async () => {
+    await expect(
+      productService.createProduct({
+        name: 'mac',
+        supplierName: '',
+        price: 100,
+        qty: 10,
+      }),
+    ).rejects.toThrow('Supplier not found');
+  });
+  it('010_createProductWithSupplierNotFound', async () => {
+    await expect(
+      productService.createProduct({
+        name: 'mac',
+        supplierName: 'fakeSupplier',
+        price: 100,
+        qty: 10,
+      }),
+    ).rejects.toThrow('Supplier not found');
   });
 });

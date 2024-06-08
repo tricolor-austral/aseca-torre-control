@@ -8,7 +8,6 @@ export class ProductRepository {
   async findAll() {
     return this.prismaService.product.findMany();
   }
-
   async addStock(id: string, qty: number) {
     return this.prismaService.product.update({
       where: {
