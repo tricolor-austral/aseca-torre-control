@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {HttpException, Injectable} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ProductService } from '../product/product.service';
 import { CrossDockingService } from '../cross-docking/cross-docking.service';
@@ -8,6 +8,14 @@ import { OrderOutput } from './dto/OrderOutput';
 
 @Injectable()
 export class OrderService {
+
+  private statusMap: Map<STATUS, bigint> = new Map([
+    [STATUS.CROSSDOCKING, 1n],
+    [STATUS.NEW, 2n],
+    [STATUS.PROGRESS, 3n],
+    [STATUS.DELIVERED, 4n],
+    ]);
+
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly crossDocking: CrossDockingService,
@@ -74,6 +82,13 @@ export class OrderService {
   }
 
   async changeStatus(id: string, status: STATUS) {
-    return await this.orderRepository.changeStatus(id, status);
+    const order = await this.orderRepository.findById(id)
+    let currentStatus : bigint = this.statusMap.get(order.status);
+    if (this.statusMap.get(status) === currentStatus + 1n) {
+      return await this.orderRepository.changeStatus(id, status);
+  }
+    else {
+      throw new HttpException('Unavailable to change status', 400);
+    }
   }
 }
