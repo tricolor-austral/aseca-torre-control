@@ -56,8 +56,8 @@ describe('OrderService', () => {
   });
   //Primer paso -> No puedo crear la orden no hay stock
   it('test 001 should not create an order if there is not enough stock', async () => {
-    const prod = await createRandomProduct();
-    const sup = await createRandomSupplier([prod.id]);
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
     const orderDto = {
       buyerId: 'buyer_10',
       products: [
@@ -85,14 +85,15 @@ describe('OrderService', () => {
   });
   //CREO UNA ORDEN SIN COMPRADOR
   it('test 003 should create an order without a buyer', async () => {
-    const prod = await createRandomProduct();
-    const sup = await createRandomSupplier([prod.id]);
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
     const orderDto = {
       buyerId: '',
       products: [
         {
           productIds: prod.id,
           qty: 1,
+          name: prod.name,
         },
       ],
     } as CreateOrderDto;
@@ -103,14 +104,15 @@ describe('OrderService', () => {
   });
 
   it('test 004 should create an order of one item', async () => {
-    const prod = await createRandomProduct();
-    const sup = await createRandomSupplier([prod.id]);
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
     const orderDto = {
       buyerId: 'buyer_1',
       products: [
         {
           productIds: prod.id,
           qty: 1,
+          name: prod.name,
         },
       ],
     } as CreateOrderDto;
@@ -125,9 +127,9 @@ describe('OrderService', () => {
   });
   //Creo una orden de 2 items
   it('test 005 should create an order of two items', async () => {
-    const prod1 = await createRandomProduct();
-    const prod2 = await createRandomProduct();
-    const sup = await createRandomSupplier([prod2.id, prod1.id]);
+    const sup = await createRandomSupplier();
+    const prod1 = await createRandomProduct(sup.name);
+    const prod2 = await createRandomProduct(sup.name);
 
     const orderDto = {
       buyerId: 'buyer_1',
@@ -135,10 +137,12 @@ describe('OrderService', () => {
         {
           productIds: prod1.id,
           qty: 1,
+          name: prod1.name,
         },
         {
           productIds: prod2.id,
           qty: 1,
+          name: prod2.name,
         },
       ],
     } as CreateOrderDto;
@@ -156,10 +160,10 @@ describe('OrderService', () => {
   });
   //Creo orden de 2 productos de 2 suppliers distintos
   it('test 006 should create an order of two items from two different suppliers', async () => {
-    const prod1 = await createRandomProduct();
-    const prod2 = await createRandomProduct();
-    const sup1 = await createRandomSupplier([prod1.id]);
-    const sup2 = await createRandomSupplier([prod2.id]);
+    const sup1 = await createRandomSupplier();
+    const sup2 = await createRandomSupplier();
+    const prod1 = await createRandomProduct(sup1.name);
+    const prod2 = await createRandomProduct(sup2.name);
     const orderDto = {
       buyerId: 'buyer_1',
       products: [
@@ -187,9 +191,9 @@ describe('OrderService', () => {
   });
   //create order with products from the same supplier
   it('test 007 should create an order with products from the same supplier', async () => {
-    const prod1 = await createRandomProduct();
-    const prod2 = await createRandomProduct();
-    const sup = await createRandomSupplier([prod1.id, prod2.id]);
+    const sup = await createRandomSupplier();
+    const prod1 = await createRandomProduct(sup.name);
+    const prod2 = await createRandomProduct(sup.name);
     const orderDto = {
       buyerId: 'buyer_1',
       products: [
@@ -217,12 +221,12 @@ describe('OrderService', () => {
   });
   //Test de crear muna orden con muchos productos y distintps suppliers
   it('test 008 should create an order with many products from different suppliers', async () => {
-    const prod1 = await createRandomProduct();
-    const prod2 = await createRandomProduct();
-    const prod3 = await createRandomProduct();
-    const prod4 = await createRandomProduct();
-    const sup1 = await createRandomSupplier([prod1.id, prod2.id]);
-    const sup2 = await createRandomSupplier([prod3.id, prod4.id]);
+    const sup2 = await createRandomSupplier();
+    const sup1 = await createRandomSupplier();
+    const prod1 = await createRandomProduct(sup1.name);
+    const prod2 = await createRandomProduct(sup2.name);
+    const prod3 = await createRandomProduct(sup1.name);
+    const prod4 = await createRandomProduct(sup2.name);
 
     const orderDto = {
       buyerId: 'buyer_1',
@@ -264,8 +268,8 @@ describe('OrderService', () => {
     );
   });
   it('create an  order with status CROSSDOCKING', async () => {
-    const prod = await createRandomProduct();
-    const sup = await createRandomSupplier([prod.id]);
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
     const orderDto = {
       buyerId: 'buyer_1',
       products: [
@@ -286,8 +290,8 @@ describe('OrderService', () => {
     expect(createdOrder.status).toEqual('CROSSDOCKING');
   });
   it('change status from order to PROGRESS', async () => {
-    const prod = await createRandomProduct();
-    const sup = await createRandomSupplier([prod.id]);
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
     const orderDto = {
       buyerId: 'buyer_1',
       products: [
@@ -308,17 +312,18 @@ describe('OrderService', () => {
     expect(updatedOrder).toBeDefined();
     expect(updatedOrder.status).toEqual('PROGRESS');
   });
-  async function createRandomProduct() {
+  async function createRandomProduct(supplierName: string) {
     return await productService.createProduct({
       qty: 10,
       name: 'computadora',
       price: 100,
+      supplierName: supplierName,
     });
   }
-  async function createRandomSupplier(productsIds: string[] = []) {
+  async function createRandomSupplier() {
     return await supplierService.createSupplier({
       name: 'Supplier nro: ' + randomStringGenerator(),
-      products: productsIds,
+      products: [],
     });
   }
 });
