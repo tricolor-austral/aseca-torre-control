@@ -141,4 +141,62 @@ describe('productService.spec.ts', () => {
       }),
     ).rejects.toThrow('Supplier not found');
   });
+
+  it('011_addStockToNonExistentProduct', async () => {
+    await expect(productService.addStock('nonExistentId', 5)).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+  it('012 add stock to product successfully', async () => {
+    const newProd = await productService.createProduct({
+      name: 'mac',
+      supplierName: 'apple',
+      price: 100,
+      qty: 10,
+    });
+    const updatedProd = await productService.addStock(newProd.id, 5);
+    expect(updatedProd.qty).toEqual(15);
+  });
+
+  it('013_getAllProductsWhenNoneExist', async () => {
+    const allProducts = await productService.getAllProducts();
+    expect(allProducts).toEqual([]);
+  });
+
+  it('014_createProductWithNegativePrice', async () => {
+    await expect(
+      productService.createProduct({
+        name: 'mac',
+        supplierName: 'apple',
+        price: -100,
+        qty: 10,
+      }),
+    ).rejects.toThrow('Price cannot be negative');
+  });
+
+  it('015_addStockWithNegativeQuantity', async () => {
+    const newProd = await productService.createProduct({
+      name: 'mac',
+      supplierName: 'apple',
+      price: 100,
+      qty: 10,
+    });
+
+    await expect(productService.addStock(newProd.id, -5)).rejects.toThrow(
+      'Quantity must be a positive number',
+    );
+  });
+
+  it('016_substractStockWithNegativeQuantity', async () => {
+    const newProd = await productService.createProduct({
+      name: 'mac',
+      supplierName: 'apple',
+      price: 100,
+      qty: 10,
+    });
+
+    await expect(productService.substractStock(newProd.id, -5)).rejects.toThrow(
+      'Quantity must be a positive number',
+    );
+  });
 });

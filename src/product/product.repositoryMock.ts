@@ -1,6 +1,7 @@
 import { Product } from '@prisma/client';
 import { ProductRepository } from './product.repository';
 import { CreateProductDto } from './dto/CreateProductDto';
+import { NotFoundException } from '@nestjs/common';
 
 export class ProductRepositoryMock extends ProductRepository {
   private products: Product[] = [];
@@ -33,6 +34,9 @@ export class ProductRepositoryMock extends ProductRepository {
     });
   }
   substractStock(id: string, qty: number) {
+    if (qty < 0) {
+      throw new Error('Quantity must be a positive number');
+    }
     const product = this.products.find((product) => product.id === id);
     if (product) {
       product.qty -= qty;
@@ -44,5 +48,14 @@ export class ProductRepositoryMock extends ProductRepository {
     return Promise.resolve(
       this.products.find((product) => product.id === id).qty,
     );
+  }
+  addStock(id: string, qty: number) {
+    const product = this.products.find((product) => product.id === id);
+    if (product) {
+      product.qty += qty;
+    } else {
+      throw new NotFoundException();
+    }
+    return Promise.resolve(product);
   }
 }

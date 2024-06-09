@@ -1,4 +1,4 @@
-import {HttpException, Injectable} from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ProductService } from '../product/product.service';
 import { CrossDockingService } from '../cross-docking/cross-docking.service';
@@ -8,13 +8,12 @@ import { OrderOutput } from './dto/OrderOutput';
 
 @Injectable()
 export class OrderService {
-
   private statusMap: Map<STATUS, bigint> = new Map([
     [STATUS.CROSSDOCKING, 1n],
     [STATUS.NEW, 2n],
     [STATUS.PROGRESS, 3n],
     [STATUS.DELIVERED, 4n],
-    ]);
+  ]);
 
   constructor(
     private readonly orderRepository: OrderRepository,
@@ -23,7 +22,6 @@ export class OrderService {
   ) {}
 
   async createOrder(data: CreateOrderDto) {
-    console.log(data.buyerId);
     if (!data.products.length) {
       throw new Error('No hay productos en la orden');
     }
@@ -31,12 +29,16 @@ export class OrderService {
       throw new Error('No hay un comprador');
     }
     for (const product of data.products) {
-      const qty = await this.productServices.checkIfThereIsStock(
-        product.productIds,
-        product.qty,
-      );
-      if (!qty) {
-        throw new Error('No hay stock suficiente');
+      if (await this.productServices.getProductById(product.productIds)) {
+        const qty = await this.productServices.checkIfThereIsStock(
+          product.productIds,
+          product.qty,
+        );
+        if (!qty) {
+          throw new Error('No hay stock suficiente');
+        }
+      } else {
+        throw new Error('Product not found');
       }
     }
     const order = await this.orderRepository.create(data);
@@ -82,12 +84,14 @@ export class OrderService {
   }
 
   async changeStatus(id: string, status: STATUS) {
-    const order = await this.orderRepository.findById(id)
-    let currentStatus : bigint = this.statusMap.get(order.status);
+    const order = await this.orderRepository.findById(id);
+    if (!order) {
+      throw new HttpException('Order not found', 404);
+    }
+    const currentStatus: bigint = this.statusMap.get(order.status);
     if (this.statusMap.get(status) === currentStatus + 1n) {
       return await this.orderRepository.changeStatus(id, status);
-  }
-    else {
+    } else {
       throw new HttpException('Unavailable to change status', 400);
     }
   }

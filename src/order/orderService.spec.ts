@@ -288,28 +288,163 @@ describe('OrderService', () => {
     );
     expect(createdOrder.status).toEqual('CROSSDOCKING');
   });
-  // it('change status from order to PROGRESS', async () => {
-  //   const sup = await createRandomSupplier();
-  //   const prod = await createRandomProduct(sup.name);
-  //   const orderDto = {
-  //     buyerId: 'buyer_1',
-  //     products: [
-  //       {
-  //         productIds: prod.id,
-  //         qty: 1,
-  //       },
-  //     ],
-  //   } as CreateOrderDto;
-  //
-  //   const createdOrder = await orderService.createOrder(orderDto);
-  //
-  //   const updatedOrder = await orderService.changeStatus(
-  //     createdOrder.id,
-  //     'PROGRESS',
-  //   );
-  //   expect(updatedOrder).toBeDefined();
-  //   expect(updatedOrder.status).toEqual('PROGRESS');
-  // });
+  //change status from crossdocking to new
+  it('change status from CROSSDOCKING to NEW', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    const updatedOrder = await orderService.changeStatus(
+      createdOrder.id,
+      'NEW',
+    );
+    expect(updatedOrder).toBeDefined();
+    expect(updatedOrder.status).toEqual('NEW');
+  });
+  //change order from new to progress
+  it('change status from new to PROGRESS', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+    const updatedOrder = await orderService.changeStatus(
+      createdOrder.id,
+      'NEW',
+    );
+    const updatedOrder2 = await orderService.changeStatus(
+      updatedOrder.id,
+      'PROGRESS',
+    );
+    expect(updatedOrder2).toBeDefined();
+    expect(updatedOrder2.status).toEqual('PROGRESS');
+  });
+  //change status from new to delivered should fail
+  it('change status from NEW to DELIVERED should fail', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    await expect(
+      orderService.changeStatus(createdOrder.id, 'DELIVERED'),
+    ).rejects.toThrow('Unavailable to change status');
+  });
+  //change status to the same status should fail
+  it('change status to the same status should fail', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+
+    await expect(
+      orderService.changeStatus(createdOrder.id, 'CROSSDOCKING'),
+    ).rejects.toThrow('Unavailable to change status');
+  });
+  it('test 009 should get all orders when none exist', async () => {
+    const allOrders = await orderService.getOrders();
+    expect(allOrders).toEqual([]);
+  });
+
+  it('test 010 should throw an error when trying to change the status of a non-existent order', async () => {
+    await expect(
+      orderService.changeStatus('nonExistentId', 'NEW'),
+    ).rejects.toThrow('Order not found');
+  });
+
+  it('test 011 should not create an order if the product does not exist', async () => {
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: 'nonExistentProductId',
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    await expect(orderService.createOrder(orderDto)).rejects.toThrow(
+      'Product with ID nonExistentProductId not found',
+    );
+  });
+
+  it('test 012 should not create an order with a negative quantity', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod.id,
+          qty: -1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    await expect(orderService.createOrder(orderDto)).rejects.toThrow(
+      'Quantity must be a positive number',
+    );
+  });
+
+  it('test 013 should not change the status of a non-existent order', async () => {
+    await expect(
+      orderService.changeStatus('nonExistentId', 'PROGRESS'),
+    ).rejects.toThrow('Order not found');
+  });
+  it('change status from new to cross docking shoud fail', async () => {
+    const sup = await createRandomSupplier();
+    const prod = await createRandomProduct(sup.name);
+    const orderDto = {
+      buyerId: 'buyer_1',
+      products: [
+        {
+          productIds: prod.id,
+          qty: 1,
+        },
+      ],
+    } as CreateOrderDto;
+
+    const createdOrder = await orderService.createOrder(orderDto);
+    await expect(
+      orderService.changeStatus(createdOrder.id, 'CROSSDOCKING'),
+    ).rejects.toThrow('Unavailable to change status');
+  });
   async function createRandomProduct(supplierName: string) {
     return await productService.createProduct({
       qty: 10,

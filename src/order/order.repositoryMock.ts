@@ -60,4 +60,23 @@ export class OrderRepositoryMock extends OrderRepository {
     order.status = status;
     return order;
   }
+  async findById(id: string) {
+    return this.orders.find((order) => order.id === id);
+  }
+  async findAll() {
+    return this.orders.map((order) => {
+      const products = this.orderProducts
+        .filter((op) => op.orderId === order.id)
+        .map((op) => ({
+          productIds: op.productId,
+          name: 'Product name',
+          qtyBought: op.qtyBought,
+        }));
+      return {
+        orderId: order.id,
+        status: order.status,
+        products,
+      };
+    });
+  }
 }

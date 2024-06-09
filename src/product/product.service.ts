@@ -7,6 +7,12 @@ export class ProductService {
   constructor(private readonly productRepository: ProductRepository) {}
 
   async createProduct(data: CreateProductDto) {
+    if (!data.supplierName) {
+      throw new Error('Supplier not found');
+    }
+    if (data.price < 0) {
+      throw new Error('Price cannot be negative');
+    }
     return await this.productRepository.createProduct(data);
   }
   async getAllProducts() {
@@ -14,6 +20,9 @@ export class ProductService {
   }
 
   async addStock(id: string, qty: number) {
+    if (qty < 0) {
+      throw new Error('Quantity must be a positive number');
+    }
     return await this.productRepository.addStock(id, qty);
   }
 

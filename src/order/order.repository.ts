@@ -11,10 +11,10 @@ export class OrderRepository {
     // Step 1: Upsert the buyer
     const buyer = await this.prisma.buyer.upsert({
       where: { id: data.buyerId },
-      update: {}, // Assuming no fields to update, otherwise specify the fields to update here.
+      update: {},
       create: {
         id: data.buyerId,
-        name: 'pepe', // Replace with data from CreateOrderDto if needed.
+        name: 'pepe',
       },
     });
 
@@ -65,13 +65,6 @@ export class OrderRepository {
   async findById(id: string) {
     return this.prisma.order.findUnique({
       where: { id },
-    });
-  }
-
-  async update(id: string, data: any) {
-    return this.prisma.order.update({
-      where: { id },
-      data,
     });
   }
   async changeStatus(id: string, status: STATUS) {
